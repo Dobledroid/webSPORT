@@ -1,0 +1,55 @@
+{
+  "name": "sport",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@paypal/react-paypal-js": "^8.1.4",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "axios": "^1.6.7",
+    "bootstrap": "^5.3.3",
+    "crypto-js": "^4.2.0",
+    "jquery": "^3.7.1",
+    "jquery-ui": "^1.13.2",
+    "leaflet": "^1.9.4",
+    "moment-timezone": "^0.5.45",
+    "owl.carousel": "^2.3.4",
+    "react": "^18.2.0",
+    "react-bootstrap": "^2.10.2",
+    "react-dom": "^18.2.0",
+    "react-google-recaptcha": "^3.1.0",
+    "react-icons": "^5.0.1",
+    "react-leaflet": "^4.2.1",
+    "react-qr-code": "^2.0.12",
+    "react-router-dom": "^6.22.3",
+    "react-scripts": "5.0.1",
+    "react-use": "^17.5.0",
+    "sweetalert2": "^11.10.6",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

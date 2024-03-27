@@ -99,14 +99,23 @@ const Checkout = () => {
     }
   };
 
-  const handleRealizarPedido = () => {
+  const handleRealizarPedido = async () => {
+    const id = user.ID_usuario;
     if (mercadoPagoSelected || paypalSelected) {
-      console.log('IDs de los productos:');
-      productos.forEach(producto => {
-        console.log(producto.ID_producto);
+      const createOrderResponse = await fetch(`${baseURL}/paypal/create-order`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ID_usuario: id,
+          total
+        }),
       });
+      const data = await createOrderResponse.json();
+      window.location.href = data.links[1].href
     } else {
-      console.log('Debe seleccionar un método de pago');
+      alert('Debe seleccionar un método de pago');
     }
   };
 

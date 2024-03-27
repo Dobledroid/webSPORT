@@ -296,12 +296,12 @@ const Carrito = () => {
             <div className="col-lg-6">
               <div className="shoping__continue">
                 <div className="shoping__discount">
-                  <h5>Códigos de descuento</h5>
+                  {/* <h5>Códigos de descuento</h5>
                   <form onSubmit={handleDescuentoSubmit}>
                     <input type="text" placeholder="Ingrese su código de cupón" value={codigoDescuento} onChange={handleInputChange} className="text-dark" />
                     <button type="submit" className="site-btn">APLICAR CUPÓN</button>
                   </form>
-                  {descuentoAplicado && <p>Descuento aplicado correctamente.</p>}
+                  {descuentoAplicado && <p>Descuento aplicado correctamente.</p>} */}
                 </div>
               </div>
             </div>

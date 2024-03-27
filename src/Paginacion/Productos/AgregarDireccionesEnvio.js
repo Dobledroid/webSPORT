@@ -17,6 +17,7 @@ const AgregarDireccionesEnvio = () => {
   const [codigoPostal, setCodigoPostal] = useState("");
   const [telefono, setTelefono] = useState("");
   const [referencias, setReferencias] = useState("");
+  const [predeterminado, setPredeterminado] = useState(true);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -73,14 +74,15 @@ const AgregarDireccionesEnvio = () => {
           estado,
           codigoPostal,
           telefono,
-          referencias
+          referencias,
+          predeterminado
         })
       });
 
       if (response.ok) {
         alert("Dirección de envío guardada exitosamente.");
-        // AGREGAR VALIDACIÓN DEL PATH 
-        navigate("/checkout");
+        // AGREGAR VALID,ACIÓN DEL PATH 
+        handleRegresar();
       } else {
         alert("Error al guardar la dirección de envío.");
       }

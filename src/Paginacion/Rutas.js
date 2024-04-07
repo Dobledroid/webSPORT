@@ -76,19 +76,28 @@ import MisDirecciones from './Usuario/Direccion/MisDirecciones';
 import Login3 from './Login/Login3';
 import EditarDireccionesEnvio from './Productos/EditarDireccionesEnvio';
 import CheckoutDirecciones from './Productos/CheckoutDirecciones';
+import ConfetiComponent from './utilidades/ConfetiComponent';
+import CompraFinalizada from './Compras/CompraFinalizada';
+import Spinner from './utilidades/Spinner';
+import SimpleSlider from './utilidades/SimpleSlider';
+import Membresias from './Membresillas/Membresias';
+import Compras from './Usuario/Compras';
+import Profile from './Usuario/Profile';
+
+
 // import Error from './Validaciones/Error404/Error';
 const Rutas = () => {
   const [user, setUser] = useLocalStorage('user');
   const [isLoggedInLogin, setIsLoggedInLogin] = useLocalStorage('isLoggedInTemp');
   const [tokenCheckout, setTokenCheckout] = useLocalStorage('tokenCheckout');
 
-  React.useEffect(() => {
-    if (tokenCheckout) {
-      console.log("Usuario registrado:", tokenCheckout);
-    } else {
-      console.log("No hay un usuario registrado.");
-    }
-  }, [tokenCheckout]);
+  // React.useEffect(() => {
+  //   if (tokenCheckout) {
+  //     console.log("Usuario registrado:", tokenCheckout);
+  //   } else {
+  //     console.log("No hay un usuario registrado.");
+  //   }
+  // }, [tokenCheckout]);
   return (
     <>
       {/* <ActiveLastBreadcrumb /> */}
@@ -105,6 +114,17 @@ const Rutas = () => {
           <Route path='/editar-direccion-envio/:ID_direccion' element={<EditarDireccionesEnvio />}></Route>
           <Route path='/checkout' element={<Checkout />}></Route>
           <Route path='/seleccionar-direccion-envio' element={<CheckoutDirecciones />}></Route>
+
+          <Route path='/compra-finalizada/:id/:tipo' element={<CompraFinalizada />}></Route>
+
+
+          <Route path='/membresias' element={<Membresias />}></Route>
+          <Route path='/historialMembresias' element={<HistorialMembresias />}></Route>
+
+          <Route path='/mis-compras' element={<Compras/> }></Route>
+          
+          <Route path='/profile' element={<Profile/> }></Route>
+
         </Route>
 
         <Route path='/header' element={<Header />}></Route>
@@ -129,15 +149,16 @@ const Rutas = () => {
         <Route path='/registro' element={<Registro />}></Route>
         <Route path='/login' element={<Login />}></Route>
 
-        <Route path='/login3' element={<Login3 />}></Route>
+        {/* <Route path='/login3' element={<Login3 />}></Route> */}
 
 
         <Route path='/membresia' Component={Membresia}></Route>
-        <Route path='/historialMembresias' Component={HistorialMembresias}></Route>
+
+
 
         <Route path='/si' Component={Sidebar}></Route>
 
-        <Route path='/login2' Component={Login2}></Route>
+        {/* <Route path='/login2' Component={Login2}></Route> */}
         <Route path='/recuperacion' Component={Recuperacion}></Route>
         <Route path='/validacion' Component={Token}></Route>
         <Route path='/resetPassword' Component={ResetPassword}></Route>
@@ -162,8 +183,16 @@ const Rutas = () => {
         <Route path='/list' Component={ProductosList}></Route>
         <Route path='/details' Component={ProductDetails}></Route>
 
+        <Route path='/admUsuarios' Component={ApiDataDisplay}></Route>
 
         <Route path='/pregunta' Component={Pregunta}></Route>
+
+
+        {/* UTILIDADES  */}
+
+        <Route path='/confeti' Component={ConfetiComponent}></Route>
+        <Route path='/spiner' Component={Spinner}></Route>
+        <Route path='/simple' Component={SimpleSlider}></Route>
 
         <Route path='*' Component={Error404}></Route>
 

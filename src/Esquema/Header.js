@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import $ from 'jquery';
 import Breadcrumbs from "./Breadcrumbs"; // Ajusta la ruta de importación según la ubicación del archivo Breadcrumbs
+import { baseURL } from '../api.js';
+import { useLocalStorage } from 'react-use';
 
 const Header = () => {
 
-  const navigate = useNavigate();
   // const { loggedIn, user, logout } = useContext(SessionContext);
-  const [user, setUser] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useLocalStorage('user');
+  const [isLoggedIn, setIsLoggedIn] = useLocalStorage('isLoggedIn');
+  const [totalProductosEnCarrito, setTotalProductosEnCarrito] = useState(0);
 
   useEffect(() => {
     $(".humberger__open").on("click", function () {
@@ -25,13 +27,22 @@ const Header = () => {
   }, []);
 
   useEffect(() => {
-    const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    if (loggedIn) {
-      const user = JSON.parse(localStorage.getItem('user'));
-      setUser(user);
-      setIsLoggedIn(loggedIn);
-    }
+    fetchTotalProductosEnCarrito();
   }, []);
+
+  const fetchTotalProductosEnCarrito = async () => {
+    try {
+      const response = await fetch(`${baseURL}/carrito-compras-total-usuario/${user.ID_usuario}`); // Ajusta la ruta de la API según tu configuración
+      if (response.ok) {
+        const data = await response.json();
+        setTotalProductosEnCarrito(data.totalProductosEnCarrito);
+      } else {
+        console.error("Error al obtener la cantidad total de productos en el carrito");
+      }
+    } catch (error) {
+      console.error("Error de red:", error);
+    }
+  };
 
   return (
     <>
@@ -85,42 +96,6 @@ const Header = () => {
 
       {/* para pantallas grandes  */}
       <header class="header sticky-top">
-        {/* <div class="header__top">
-          <div class="container bg-warning">
-            <div class="row">
-              <div class="col-lg-6 col-md-6">
-                <div class="header__top__left">
-                  <ul>
-                    <li><i class="fa fa-envelope"></i> hellophione@colorlib.com</li>
-                    <li>Free Shipping for all Order of $99</li>
-                  </ul>
-                </div>
-              </div>
-              <div class="col-lg-6 col-md-6">
-                <div class="header__top__right">
-                  <div class="header__top__right__social">
-                    <a href="#"><i class="fa fa-facebook"></i></a>
-                    <a href="#"><i class="fa fa-twitter"></i></a>
-                    <a href="#"><i class="fa fa-linkedin"></i></a>
-                    <a href="#"><i class="fa fa-pinterest-p"></i></a>
-                  </div>
-                  <div class="header__top__right__language">
-                    <img src="img/language.png" alt="" />
-                    <div>English</div>
-                    <span class="arrow_carrot-down"></span>
-                    <ul>
-                      <li><a href="#">Spanis</a></li>
-                      <li><a href="#">English</a></li>
-                    </ul>
-                  </div>
-                  <div class="header__top__right__auth">
-                    <a href="#"><i class="fa fa-user"></i> Login</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div> */}
         <div class="container">
           <div class="row">
             <div class="col-lg-3">
@@ -150,8 +125,8 @@ const Header = () => {
             <div class="col-lg-3">
               <div class="header__cart">
                 <ul>
-                  <li><a href="#"><i class="fa fa-heart"></i> <span>1</span></a></li>
-                  <li><Link to="/carrito"><i class="fa fa-shopping-bag"></i> <span>3</span></Link></li>
+                  {/* <li><a href="#"><i class="fa fa-heart"></i> <span>1</span></a></li> */}
+                  <li><Link to="/carrito"><i class="fa fa-shopping-bag"></i> <span>{totalProductosEnCarrito}</span></Link></li>
                 </ul>
                 {isLoggedIn ? (
                   <>
@@ -169,10 +144,7 @@ const Header = () => {
                     <div class="header__cart__price ms-4">item: <span>$150.00</span></div>
                   </>
                 )}
-
-
               </div>
-
             </div>
           </div>
           <div class="humberger__open">

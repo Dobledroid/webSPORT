@@ -100,6 +100,10 @@ const Checkout = () => {
   };
 
   const handleRealizarPedido = async () => {
+    const currentURL = new URL(window.location.href);
+    const host = "http://localhost:3000/";
+    // const host = currentURL.protocol + '//' + currentURL.hostname;
+    // console.log(host); 
     const id = user.ID_usuario;
     if (mercadoPagoSelected || paypalSelected) {
       const createOrderResponse = await fetch(`${baseURL}/paypal/create-order`, {
@@ -109,11 +113,24 @@ const Checkout = () => {
         },
         body: JSON.stringify({
           ID_usuario: id,
-          total
+          total,
+          currentURL: host
         }),
       });
-      const data = await createOrderResponse.json();
-      window.location.href = data.links[1].href
+      
+      if (createOrderResponse.ok) {
+        const data = await createOrderResponse.json();
+        console.log(data);
+        window.location.href = data.links[1].href;
+        if (data.redirectTo) {
+          window.location.href = data.redirectTo;
+        } else {
+          console.error("No se proporcionó una URL de redirección en la respuesta del servidor.");
+        }
+      } else {
+        alert(`Hubo un error con la petición: ${createOrderResponse.status} ${createOrderResponse.statusText}`);
+      }
+      
     } else {
       alert('Debe seleccionar un método de pago');
     }
@@ -198,7 +215,7 @@ const Checkout = () => {
                   <div class="checkout__order__products">Productos <span>Total</span></div>
                   <ul>
                     {productos.map(producto => (
-                      <li key={producto.ID_producto}> {producto.nombre.slice(0, 20)}... <span>${producto.precioFinal.toFixed(2)}</span></li>
+                      <li key={producto.ID_producto}> {producto.nombre.slice(0, 15)}...(x{producto.cantidad}) <span>${(producto.precioFinal*producto.cantidad).toFixed(2)}</span></li>
                     ))}
                   </ul>
                   <div class="checkout__order__subtotal">Subtotal <span>${subtotal.toFixed(2)}</span></div>

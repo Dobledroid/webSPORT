@@ -1,25 +1,46 @@
 import React, { useState, useEffect } from 'react';
 
 const ApiDataDisplay = () => {
-  // Estado para almacenar los datos obtenidos de la API
   const [apiData, setApiData] = useState(null);
-  // Estado para controlar si se está cargando la información
   const [loading, setLoading] = useState(true);
 
   // Función para obtener los datos de la API
   const fetchData = async () => {
     try {
-      // Realizar la solicitud a tu API
-      const response = await fetch('https://api-rest-sport.vercel.app/api/users');
+      const token = localStorage.getItem('jwtToken'); // Obtener el token JWT del localStorage
+      console.log(token)
+      // Verificar si el token está presente
+      if (!token) {
+        throw new Error('Token JWT no encontrado en localStorage');
+      }
+
+      // Realizar la solicitud a tu API incluyendo el token en el encabezado de autorización
+      const response = await fetch('http://localhost:4000/api/users/count', {
+        headers: {
+          'Authorization': `Bearer ${token}` // Agregar el token al encabezado de autorización
+        }
+      });
+
       // Verificar si la respuesta es exitosa
       if (response.ok) {
         // Convertir la respuesta a formato JSON
         const data = await response.json();
         // Actualizar el estado con los datos obtenidos
         setApiData(data);
+      } else if (response.status === 401) {
+        // Acceso no autorizado (token no proporcionado o inválido)
+        console.log('Acceso no autorizado. Debe iniciar sesión.');
+      } else if (response.status === 403) {
+        // Acceso prohibido (token válido pero no tiene permisos suficientes)
+        console.log('Acceso prohibido. No tiene permisos suficientes.');
+      } else if (response.status === 419) {
+        // Sesión expirada debido a la caducidad del token
+        console.log('La sesión ha expirado debido a la caducidad del token. Por favor, inicie sesión nuevamente.');
+        // Puedes redirigir al usuario a la página de inicio de sesión
+        window.location.href = '/login';
       } else {
-        // Si la respuesta no es exitosa, lanzar un error
-        throw new Error('Error al obtener los datos de la API');
+        // Otro error no manejado
+        console.log('Error desconocido:', response.statusText);
       }
     } catch (error) {
       // Manejar errores de solicitud

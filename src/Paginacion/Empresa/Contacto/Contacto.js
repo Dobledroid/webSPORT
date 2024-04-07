@@ -16,8 +16,12 @@ const Contacto = () => {
       <Header />
       <section >
         <div class="container">
-          <h2 className='h2Products'><b>Contáctanos</b></h2>
-          <div class="row"> 
+          <div class="text-center mt-2 mb-5">
+            <div class="breadcrumb__text">
+              <h2 className='text-black'>Contáctanos</h2>
+            </div>
+          </div>
+          <div class="row">
             <div class="col-lg-3 col-md-3 col-sm-6 text-center">
               <div className="contact__widget">
                 <span class="icon-phone"></span>
@@ -66,7 +70,7 @@ const Contacto = () => {
         </div> */}
       </div>
 
-      <div class="contact-form spad"> 
+      <div class="contact-form spad">
         <div class="container">
           <div class="row">
             <div class="col-lg-12">

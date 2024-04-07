@@ -5,8 +5,11 @@ import Footer from '../../Esquema/Footer';
 import Swal from 'sweetalert2';
 import { baseURL } from '../../api.js';
 
+import { GoHeart } from "react-icons/go";
+
 const ProductDetails = () => {
   const { id } = useParams();
+  const [ID_carrito, setID_carrito] = useState("");
   const [product, setProduct] = useState([]);
   const [quantity, setQuantity] = useState(1);
   const [maxQuantity, setMaxQuantity] = useState(1);
@@ -17,10 +20,9 @@ const ProductDetails = () => {
     // Definir la función de solicitud fetch
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`${baseURL}/products-with-imagens/${id}`); 
+        const response = await fetch(`${baseURL}/products-with-imagens/${id}`);
         if (response.ok) {
           const data = await response.json();
-          console.log(data)
           setProduct(data);
           setMaxQuantity(data[0].existencias);
         } else {
@@ -45,42 +47,105 @@ const ProductDetails = () => {
     if (loggedIn) {
       const user = JSON.parse(localStorage.getItem('user'));
       try {
-        const response = await fetch(`${baseURL}/carrito-compras`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            ID_usuario: user.ID_usuario,
-            ID_producto: product[0].ID_producto,
-            cantidad: quantity
-          })
-        });
+        const response = await fetch(`${baseURL}/carrito-compras-existe-prod/${user.ID_usuario}/${product[0].ID_producto}`);
         if (response.ok) {
-          Swal.fire({
-            title: "Producto agregado al carrito",
-            icon: "success",
-            showDenyButton: true,
-            // showCancelButton: true,
-            confirmButtonText: "Ver carrito",
-            denyButtonText: "Seguir comprando",
-          }).then((result) => {
-            if (result.isConfirmed) {
-              window.location.href = "/carrito";
-            } else if (result.isDenied) {
-              // Aquí puedes añadir alguna acción adicional si el usuario elige "Seguir comprando"
+          const data = await response.json();
+          // console.log(data.ID_carrito)
+          if (data.existeRegistro) {
+            const response = await fetch(`${baseURL}/carrito-compras/${data.ID_carrito}`);
+            if (!response.ok) {
+              throw new Error('Error al obtener los elementos del carrito');
             }
-          });
+            const datos = await response.json();
+            // console.log("datos", datos)
+            const cantidad = quantity + datos.cantidad;
+            if (cantidad > maxQuantity) {
+              Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "¡La cantidad de productos seleccionados accede el maximo en stock!",
+                footer: '<a href="/carrito">Ir al carrito</L>'
+              });
+            } else {
+              updateItemQuantity(data.ID_carrito, cantidad);
+            }
+          } else {
+            try {
+              const response = await fetch(`${baseURL}/carrito-compras`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  ID_usuario: user.ID_usuario,
+                  ID_producto: product[0].ID_producto,
+                  cantidad: quantity
+                })
+              });
+              if (response.ok) {
+                Swal.fire({
+                  title: "Producto agregado al carrito",
+                  icon: "success",
+                  showDenyButton: true,
+                  // showCancelButton: true,
+                  confirmButtonText: "Ver carrito",
+                  denyButtonText: "Seguir comprando",
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    window.location.href = "/carrito";
+                  } else if (result.isDenied) {
+                  }
+                });
+              } else {
+                console.error('Error al agregar el producto al carrito');
+              }
+            } catch (error) {
+              console.error('Error de red:', error);
+            }
+          }
         } else {
-          console.error('Error al agregar el producto al carrito');
+          throw new Error('Error al verificar la existencia del producto en el carrito');
         }
       } catch (error) {
-        console.error('Error de red:', error);
+        console.error('Error:', error);
+        throw error;
       }
+
     } else {
       navigate('/login');
     }
   };
+
+  const updateItemQuantity = async (ID_carrito, cantidad) => {
+    try {
+      const response = await fetch(`${baseURL}/carrito-compras/${ID_carrito}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ cantidad })
+      });
+      if (response.ok) {
+        Swal.fire({
+          title: "Producto agregado al carrito",
+          icon: "success",
+          showDenyButton: true,
+          confirmButtonText: "Ver carrito",
+          denyButtonText: "Seguir comprando",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = "/carrito";
+          } else if (result.isDenied) {
+          }
+        });
+      } else {
+        console.error('Error en la solicitud:', response.status);
+      }
+    } catch (error) {
+      console.error('Error al realizar la solicitud:', error);
+    }
+  };
+
 
 
   return (
@@ -118,16 +183,24 @@ const ProductDetails = () => {
                   <i className="fa fa-star-half-o"></i>
                   <span>(18 reseñas)</span>
                 </div>
-                <div className="product__details__price">${product && product.length > 0 ? product[0].precio : "0.00"}</div>
-                <div className="product__details__quantity">
-                  <div className="quantity">
-                    <div className="pro-qty">
-                      <input type="number" value={quantity} min="1" max={maxQuantity} onChange={handleQuantityChange} />
+                {product && product.length > 0 ? (
+                  <p>El producto no está disponible por falta de stock</p>
+                ) : (
+                  <>
+                    <div className="product__details__price">${product && product.length > 0 ? product[0].precio : "0.00"}</div>
+                    <div className="product__details__quantity">
+                      <div className="quantity">
+                        <div className="pro-qty">
+                          <input type="number" value={quantity} min="1" max={maxQuantity} onChange={handleQuantityChange} />
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-                <button className="primary-btn" onClick={addToCart} style={{ border: 'none' }}>AGREGAR AL CARRITO</button>
-                <a href="#" className="heart-icon"><span className="icon_heart_alt"></span></a>
+                    <button className="primary-btn" onClick={addToCart} style={{ border: 'none' }}>
+                      AGREGAR AL CARRITO
+                    </button>
+                  </>
+                )}
+                <a href="#" className="heart-icon"><GoHeart size={18} /></a>
                 <ul>
                   <li><b>Disponibilidad</b> <span> ({product && product.length > 0 ? product[0].existencias : "NULL"}) En stock</span></li>
                   <li><b>Envío</b> <span>01 day shipping. <samp>Free pickup today</samp></span></li>
@@ -184,9 +257,6 @@ const ProductDetails = () => {
           </div>
         </div>
       </section>
-
-
-
       <Footer />
     </>
   );

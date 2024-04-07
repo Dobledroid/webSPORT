@@ -7,7 +7,7 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import './Login.css';
 import { baseURL } from '../../api.js';
 
-const Login3 = () => {
+const Login = () => {
   const [dataUser, setDataUser] = useState(null);
 
   const [correo, setCorreo] = useState('');
@@ -16,7 +16,6 @@ const Login3 = () => {
   const [alert, setAlert] = useState(null);
 
   const [mostrarDiv, setMostrarDiv] = useState(true);
-
 
   const showAlert = (type, message) => {
     setAlert({ type, message });
@@ -51,6 +50,7 @@ const Login3 = () => {
       }
 
       const userData = await response.json();
+
 
       setDataUser(userData);
       setMostrarDiv(!mostrarDiv);
@@ -121,17 +121,20 @@ const Login3 = () => {
       if (!response.ok) {
         throw new Error(data.msg);
       }
+      const tokenJWT = data.token;
 
       const id = dataUser.ID_usuario;
       const loginResponse = await fetch(`${baseURL}/users/${id}`);
 
       const loginData = await loginResponse.json();
-
+      console.log(loginData)
       if (!loginResponse.ok) {
         throw new Error(loginResponse.msg);
       }
-      const user = { usuario: loginData.nombre, correo: loginData.correoElectronico, ID_usuario: loginData.ID_usuario, tipo: loginData.ID_rol };
 
+      const user = { usuario: loginData.nombre, correo, ID_usuario: loginData.ID_usuario, ID_rol: loginData.ID_rol };
+      // console.log("user", user)
+      localStorage.setItem('jwtToken', tokenJWT);
       localStorage.setItem('isLoggedIn', true);
       localStorage.setItem('user', JSON.stringify(user));
       window.location.reload();
@@ -282,4 +285,4 @@ const Login3 = () => {
   );
 };
 
-export default Login3;
+export default Login;

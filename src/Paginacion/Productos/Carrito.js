@@ -6,6 +6,9 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { baseURL } from '../../api.js';
 
+import { PiShoppingCartFill } from "react-icons/pi";
+import "./Carrito.css";
+
 const Carrito = () => {
   const [productos, setProductos] = useState([]);
   const [user, setUser] = useState('');
@@ -33,10 +36,9 @@ const Carrito = () => {
         const user = JSON.parse(localStorage.getItem('user'));
         setUser(user);
         try {
-          const response = await fetch(`${baseURL}/carrito-compras/${user.ID_usuario}`);
+          const response = await fetch(`${baseURL}/carrito-compras-ID-usuario/${user.ID_usuario}`);
           if (response.ok) {
             const data = await response.json();
-            // console.log(data)
             setProductos(data);
           } else {
             console.error("Error al cargar los productos del carrito");
@@ -203,120 +205,123 @@ const Carrito = () => {
   };
 
   const calcularSubtotal = () => {
-    return productos.reduce((subtotal, producto) => subtotal + producto.precioFinal, 0);
+    return productos.reduce((subtotal, producto) => subtotal + (producto.precioFinal * producto.cantidad), 0);
   };
+
 
   const calcularTotal = () => {
     let total = calcularSubtotal();
     if (descuentoAplicado) {
-      // Aplicar descuento SPORT100 si está activado
       total -= 100;
     }
     return total;
   };
 
-  const generarCodigoAleatorio = (longitud) => {
-    const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let codigo = '';
-    for (let i = 0; i < longitud; i++) {
-      const indice = Math.floor(Math.random() * caracteres.length);
-      codigo += caracteres.charAt(indice);
-    }
-    return codigo;
+  const handlePagarClick = () => {
+    navigate('/checkout', {
+      state: {
+        subtotal: calcularSubtotal(),
+        // descuentoAplicado, 
+        total: calcularTotal(),
+        ID_usuario: user.ID_usuario
+      }
+    });
   };
 
-  
-  const handlePagarClick = () => {
-    navigate('/checkout', { state: { 
-      subtotal: calcularSubtotal(), 
-      // descuentoAplicado, 
-      total: calcularTotal(),
-      ID_usuario: user.ID_usuario } });
-  };
-  
   return (
     <>
 
       <Header />
       <section className="shoping-cart spad">
-        <div className="container">
-          <div className="row">
-            <div className="col-lg-12">
-              <div className="shoping__cart__table">
-                <table>
-                  <thead>
-                    <tr>
-                      <th className="shoping__product">Productos</th>
-                      <th>Precio</th>
-                      <th>Cantidad</th>
-                      <th>Total</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {productos.map((producto) => (
-                      <tr key={producto.ID_carrito}>
-                        <td className="shoping__cart__item">
-                          <img src={producto.imagenUrl} alt={producto.nombre} style={{ width: '81px', height: '90px' }} />
-                          <h5>{producto.nombre.slice(0, 50)}...</h5>
-                        </td>
-                        <td className="shoping__cart__price">${producto.precioFinal}</td>
-                        <td className="shoping__cart__quantity">
-                          <div className="quantity">
-                            <div className="pro-qty" style={{ userSelect: 'none' }}>
-                              <span className="dec qtybtn" onClick={() => handleDecrement(producto.ID_producto)}> - </span>
-                              <input type="text" value={producto.cantidad} readOnly />
-                              <span className="inc qtybtn" onClick={() => handleIncrement(producto.ID_producto, producto.existencias)}> + </span>
-                            </div>
-                            {producto.cantidad <= 0 && <p style={{ color: 'red', userSelect: 'none' }}>La cantidad debe ser mayor a 0</p>}
-                            {producto.cantidad > producto.existencias && <p style={{ color: 'red', userSelect: 'none' }}>No hay suficientes existencias</p>}
-                          </div>
-                        </td>
-                        <td className="shoping__cart__total" style={{ userSelect: 'none' }}>${(producto.precioFinal * producto.cantidad).toFixed(2)}</td>
-                        <td className="shoping__cart__item__close">
-                          <span className="icon_close" onClick={() => handleDeleteProduct(producto.ID_carrito, producto.ID_producto)}></span>
-                        </td>
-                      </tr>
-                    ))}
 
-                  </tbody>
-                </table>
+        <div className="container">
+          {productos.length === 0 ? (
+            <div className="content-height">
+              <div className="empty-cart-message">
+                <h6><PiShoppingCartFill size={40} /> El carrito de compras está vacío</h6>
               </div>
             </div>
-          </div>
-          <div className="row">
-            <div className="col-lg-12">
-              <div className="shoping__cart__btns">
-                <button className="primary-btn cart-btn" style={{ border: 'none' }} onClick={() => navigate('/tienda')}>SEGUIR COMPRANDO</button>
-                {/* <button className="primary-btn cart-btn cart-btn-right" style={{ border: 'none' }} onClick={handleUpdateCart}>
+          ) : (
+            <>
+              <div className="row">
+                <div className="col-lg-12">
+                  <div className="shoping__cart__table">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th className="shoping__product">Productos</th>
+                          <th>Precio</th>
+                          <th>Cantidad</th>
+                          <th>Total</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {productos.map((producto) => (
+                          <tr key={producto.ID_carrito}>
+                            <td className="shoping__cart__item">
+                              <img src={producto.imagenUrl} alt={producto.nombre} style={{ width: '81px', height: '90px' }} />
+                              <h5>{producto.nombre.slice(0, 50)}...</h5>
+                            </td>
+                            <td className="shoping__cart__price">${producto.precioFinal}</td>
+                            <td className="shoping__cart__quantity">
+                              <div className="quantity">
+                                <div className="pro-qty" style={{ userSelect: 'none' }}>
+                                  <span className="dec qtybtn" onClick={() => handleDecrement(producto.ID_producto)}> - </span>
+                                  <input type="text" value={producto.cantidad} readOnly />
+                                  <span className="inc qtybtn" onClick={() => handleIncrement(producto.ID_producto, producto.existencias)}> + </span>
+                                </div>
+                                {producto.cantidad <= 0 && <p style={{ color: 'red', userSelect: 'none' }}>La cantidad debe ser mayor a 0</p>}
+                                {producto.cantidad > producto.existencias && <p style={{ color: 'red', userSelect: 'none' }}>No hay suficientes existencias</p>}
+                              </div>
+                            </td>
+                            <td className="shoping__cart__total" style={{ userSelect: 'none' }}>${(producto.precioFinal * producto.cantidad).toFixed(2)}</td>
+                            <td className="shoping__cart__item__close">
+                              <span className="icon_close" onClick={() => handleDeleteProduct(producto.ID_carrito, producto.ID_producto)}></span>
+                            </td>
+                          </tr>
+                        ))}
+
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-lg-12">
+                  <div className="shoping__cart__btns">
+                    <button className="primary-btn cart-btn" style={{ border: 'none' }} onClick={() => navigate('/tienda')}>SEGUIR COMPRANDO</button>
+                    {/* <button className="primary-btn cart-btn cart-btn-right" style={{ border: 'none' }} onClick={handleUpdateCart}>
                   <span className="icon_loading"></span> ACTUALIZACIÓN DE LA COMPRA
                 </button> */}
-              </div>
-            </div>
-            <div className="col-lg-6">
-              <div className="shoping__continue">
-                <div className="shoping__discount">
-                  {/* <h5>Códigos de descuento</h5>
+                  </div>
+                </div>
+                <div className="col-lg-6">
+                  <div className="shoping__continue">
+                    <div className="shoping__discount">
+                      {/* <h5>Códigos de descuento</h5>
                   <form onSubmit={handleDescuentoSubmit}>
                     <input type="text" placeholder="Ingrese su código de cupón" value={codigoDescuento} onChange={handleInputChange} className="text-dark" />
                     <button type="submit" className="site-btn">APLICAR CUPÓN</button>
                   </form>
                   {descuentoAplicado && <p>Descuento aplicado correctamente.</p>} */}
+                    </div>
+                  </div>
+                </div>
+                <div className="col-lg-6">
+                  <div className="shoping__checkout">
+                    <h5>Total del carrito</h5>
+                    <ul>
+                      <li>Subtotal <span>${calcularSubtotal().toFixed(2)}</span></li>
+                      {descuentoAplicado && <li>Descuento aplicado (SPORT100) <span>-$100.00</span></li>}
+                      <li>Total <span>${calcularTotal().toFixed(2)}</span></li>
+                    </ul>
+                    <button style={{ border: 'none' }} className="primary-btn w-100" onClick={handlePagarClick}>PAGAR</button>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="col-lg-6">
-              <div className="shoping__checkout">
-                <h5>Total del carrito</h5>
-                <ul>
-                  <li>Subtotal <span>${calcularSubtotal().toFixed(2)}</span></li>
-                  {descuentoAplicado && <li>Descuento aplicado (SPORT100) <span>-$100.00</span></li>}
-                  <li>Total <span>${calcularTotal().toFixed(2)}</span></li>
-                </ul>
-                <button style={{ border: 'none' }} className="primary-btn w-100" onClick={handlePagarClick}>PAGAR</button>
-              </div>
-            </div>
-          </div>
+            </>
+          )}
         </div>
       </section>
       <Footer />

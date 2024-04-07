@@ -126,11 +126,22 @@ const Panel = () => {
                 </li>
                 <li className="row my-3">
                   <div className="col">
+                    <UserProfile userImage={iconUserId} />
+                  </div>
+                  <div className="col second-col">
+                    <span>Mis compras</span>
+                    <p>Información sobre las compras realizadas.</p>
+                    <button onClick={() => { navigate('/mis-compras'); }} >Mi compras</button>
+                  </div>
+                </li>
+                <li className="row my-3">
+                  <div className="col">
                     <UserProfile userImage={iconUser} />
                   </div>
                   <div className="col">
                     <span>Datos de tu cuenta</span>
                     <p>Datos que representan a la cuenta en Sport Gym Center.</p>
+                    <button onClick={() => { navigate('/profile'); }} >Mi cuenta</button>
                   </div>
                 </li>
                 <li className="row my-3">

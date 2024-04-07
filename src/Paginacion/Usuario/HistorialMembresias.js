@@ -1,26 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Header from '../../Esquema/Header';
 import Footer from '../../Esquema/Footer';
-
+import { useLocalStorage } from 'react-use';
 import { baseURL } from '../../api.js';
 
 const HistorialMembresias = () => {
-  const [productos, setProductos] = useState([]);
   const [membresias, setMembresias] = useState([]);
   const [cargando, setCargando] = useState(true);
-  const [mostrarComponente, setMostrarComponente] = useState(null);
-  const [prodEditando, setProdEditando] = useState(null);
-  const [prodEliminando, setProdEliminando] = useState(null);
-  const [recuperado, setRecuperado] = useState(false);
   const navigate = useNavigate();
 
-  
-  const location = useLocation();
-  const dataUser = location.state;
+  const [user, setUser] = useLocalStorage('user');
 
   useEffect(() => {
-    const id = dataUser.ID_usuario;
+    const id = user.ID_usuario;
     const fetchData = async () => {
       try {
         const response = await fetch(`${baseURL}/mi-historial-membresias/${id}`);
@@ -37,16 +30,6 @@ const HistorialMembresias = () => {
     };
     fetchData();
   }, []);
-
-  const handleEditar = (producto) => {
-    setProdEditando(producto);
-    setMostrarComponente("editar");
-    setRecuperado(!recuperado);
-  };
-  const handleEliminar = (producto) => {
-    setProdEliminando(producto);
-    setMostrarComponente("eliminar");
-  };
 
   return (
     <>
@@ -81,14 +64,13 @@ const HistorialMembresias = () => {
                       <table className="table table-hover table-bordered">
                         <thead>
                           <tr>
-                            <th scope="col">ID_historialMembresia</th>
-                            <th scope="col">ID_tipoMembresia</th>
-                            <th scope="col">fechaInicio</th>
-                            <th scope="col">fechaVencimiento</th>
-                            <th scope="col">precio</th>
-                            <th scope="col">operacion_id</th>
-                            <th scope="col">operacion_status</th>
-                            <th scope="col">operacion_status_detail</th>
+                            <th scope="col">#</th>
+                            <th scope="col">Tipo de membresía</th>
+                            <th scope="col">Fecha de inicio</th>
+                            <th scope="col">Fecha de vencimiento</th>
+                            <th scope="col">Precio</th>
+                            <th scope="col">Operación</th>
+                            <th scope="col">Estatus</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -101,7 +83,6 @@ const HistorialMembresias = () => {
                               <td>{membresia.precio}</td>
                               <td>{membresia.operacion_id}</td>
                               <td>{membresia.operacion_status}</td>
-                              <td>{membresia.operacion_status_detail}</td>
                               {/* <td className="d-flex justify-content-center">
                               <Link to={`/EditarProducto/${producto.ID_producto}`} className="btn btn-primary btn-sm me-2">
                                 <i className="bi bi-pencil-fill text-dark"></i>

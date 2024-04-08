@@ -4,7 +4,7 @@ import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.14.0/firebase
 import {getAuth} from "https://www.gstatic.com/firebasejs/9.14.0/firebase-auth.js"
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAu7AJN6b4MYF2_zOlgYky7QKXkvQZireA",
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
   authDomain: "login-topfoodye.firebaseapp.com",
   projectId: "login-topfoodye",
   storageBucket: "login-topfoodye.appspot.com",

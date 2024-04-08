@@ -58,8 +58,7 @@ import Error404 from './Validaciones/Error404/Error404';
 import subirImagen from './Administracion/Productos/subirImagen';
 import MapComponent from './Validaciones/MapComponent/MapComponent';
 
-import MembershipComponent from './Membresillas/MembershipComponent';
-import Suscripcion from './Membresillas/Subcripcion';
+
 import Membresia from './Usuario/Membresia';
 import HistorialMembresias from './Usuario/HistorialMembresias';
 
@@ -173,9 +172,9 @@ const Rutas = () => {
 
 
         {/* <Route path='/menuVisual' Component={ MenuAccessible }></Route> */}
-
+{/* 
         <Route path='/membresias' Component={MembershipComponent}></Route>
-        <Route path='/suscripcion' Component={Suscripcion}></Route>
+        <Route path='/suscripcion' Component={Suscripcion}></Route> */}
 
 
         {/* COMPONENTES QUE DEBEN SER MODIFICADOS CON ESTILOS  */}

@@ -24,7 +24,7 @@ const AgregarDireccionesEnvio = () => {
   // Función para validar el código postal
   const validarCodigoPostal = () => {
     // Sustituye 'TU_API_KEY' con tu propia clave de API
-    const apiKey = 'AIzaSyCsTdWNjFEh9ZNoNpoga7IUilOQNZS7XTY';
+    const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
     fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${codigoPostal},+Mexico&key=${apiKey}`)
       .then(response => response.json())
       .then(data => {

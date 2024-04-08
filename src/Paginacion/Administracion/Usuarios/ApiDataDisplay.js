@@ -6,6 +6,8 @@ const ApiDataDisplay = () => {
 
   // Función para obtener los datos de la API
   const fetchData = async () => {
+  console.log(process.env.REACT_APP_FIREBASE_API_KEY)
+
     try {
       const token = localStorage.getItem('jwtToken'); // Obtener el token JWT del localStorage
       console.log(token)
@@ -15,7 +17,7 @@ const ApiDataDisplay = () => {
       }
 
       // Realizar la solicitud a tu API incluyendo el token en el encabezado de autorización
-      const response = await fetch('http://localhost:4000/api/users/count', {
+      const response = await fetch('ttp://localhost:4000/api/users/count', {
         headers: {
           'Authorization': `Bearer ${token}` // Agregar el token al encabezado de autorización
         }

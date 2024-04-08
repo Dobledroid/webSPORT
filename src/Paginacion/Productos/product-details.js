@@ -183,11 +183,9 @@ const ProductDetails = () => {
                   <i className="fa fa-star-half-o"></i>
                   <span>(18 reseñas)</span>
                 </div>
-                {product && product.length > 0 ? (
-                  <p>El producto no está disponible por falta de stock</p>
-                ) : (
+                {product && product.length > 0 && product[0].existencias > 0 ? (
                   <>
-                    <div className="product__details__price">${product && product.length > 0 ? product[0].precio : "0.00"}</div>
+                    <div className="product__details__price">${product[0].precio}</div>
                     <div className="product__details__quantity">
                       <div className="quantity">
                         <div className="pro-qty">
@@ -199,6 +197,8 @@ const ProductDetails = () => {
                       AGREGAR AL CARRITO
                     </button>
                   </>
+                ) : (
+                  <p>El producto no está disponible por falta de stock</p>
                 )}
                 <a href="#" className="heart-icon"><GoHeart size={18} /></a>
                 <ul>

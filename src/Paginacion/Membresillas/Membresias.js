@@ -10,6 +10,11 @@ import Swal from 'sweetalert2';
 const Membresias = () => {
   const [user, setUser] = useLocalStorage('user');
 
+  function esURLSegura(url) {
+    const regex = /^(ftp|http|https):\/\/[^ "]+$/;
+    return regex.test(url);
+  }
+
   const handleRealizarPedido = async (nombre, total, ID_tipoMembresia) => {
     const currentURL = new URL(window.location.href);
     const host = currentURL.protocol + '//' + currentURL.hostname;
@@ -32,12 +37,17 @@ const Membresias = () => {
 
     if (createOrderResponse.ok) {
       const data = await createOrderResponse.json();
-      console.log(data);
-      window.location.href = data.links[1].href;
-      if (data.redirectTo) {
-        window.location.href = data.redirectTo;
+      // console.log(data);
+      if (data.links && Array.isArray(data.links) && data.links.length >= 2) {
+        const redirectUrl = data.links[1].href;
+
+        if (esURLSegura(redirectUrl)) {
+          window.location.href = redirectUrl;
+        } else {
+          console.error("La URL de redirección no es segura.");
+        }
       } else {
-        console.error("No se proporcionó una URL de redirección en la respuesta del servidor.");
+        console.error("No se encontraron suficientes enlaces válidos en los datos proporcionados.");
       }
     } else {
       alert(`Hubo un error con la petición: ${createOrderResponse.status} ${createOrderResponse.statusText}`);

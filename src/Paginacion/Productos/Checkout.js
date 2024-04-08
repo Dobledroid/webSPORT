@@ -99,6 +99,11 @@ const Checkout = () => {
     }
   };
 
+  function esURLSegura(url) {
+    const regex = /^(ftp|http|https):\/\/[^ "]+$/;
+    return regex.test(url);
+  }
+
   const handleRealizarPedido = async () => {
     const currentURL = new URL(window.location.href);
     const host = "http://localhost:3000/";
@@ -117,20 +122,26 @@ const Checkout = () => {
           currentURL: host
         }),
       });
-      
+
       if (createOrderResponse.ok) {
         const data = await createOrderResponse.json();
-        console.log(data);
-        window.location.href = data.links[1].href;
-        if (data.redirectTo) {
-          window.location.href = data.redirectTo;
+        // console.log(data);
+
+        if (data.links && Array.isArray(data.links) && data.links.length >= 2) {
+          const redirectUrl = data.links[1].href;
+
+          if (esURLSegura(redirectUrl)) {
+            window.location.href = redirectUrl;
+          } else {
+            console.error("La URL de redirección no es segura.");
+          }
         } else {
-          console.error("No se proporcionó una URL de redirección en la respuesta del servidor.");
+          console.error("No se encontraron suficientes enlaces válidos en los datos proporcionados.");
         }
       } else {
         alert(`Hubo un error con la petición: ${createOrderResponse.status} ${createOrderResponse.statusText}`);
       }
-      
+
     } else {
       alert('Debe seleccionar un método de pago');
     }
@@ -215,7 +226,7 @@ const Checkout = () => {
                   <div class="checkout__order__products">Productos <span>Total</span></div>
                   <ul>
                     {productos.map(producto => (
-                      <li key={producto.ID_producto}> {producto.nombre.slice(0, 15)}...(x{producto.cantidad}) <span>${(producto.precioFinal*producto.cantidad).toFixed(2)}</span></li>
+                      <li key={producto.ID_producto}> {producto.nombre.slice(0, 15)}...(x{producto.cantidad}) <span>${(producto.precioFinal * producto.cantidad).toFixed(2)}</span></li>
                     ))}
                   </ul>
                   <div class="checkout__order__subtotal">Subtotal <span>${subtotal.toFixed(2)}</span></div>

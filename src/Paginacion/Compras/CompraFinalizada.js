@@ -6,7 +6,7 @@ import { baseURL } from '../../api.js';
 import ConfettiComponent from '../utilidades/ConfetiComponent.js';
 import Spinner from '../utilidades/Spinner';
 import "./CompraFinalizada.css"
-
+import DOMPurify from 'dompurify'; 
 import { FaPlus } from "react-icons/fa";
 
 const CompraFinalizada = () => {
@@ -89,8 +89,9 @@ const CompraFinalizada = () => {
                   <>
                     <div className="imagen-container mt-5">
                       {imagenes.map((url, index) => (
+                        
                         <div key={index} className={`imagen-item ${index + 1 >= 3 ? "opacidad" : ""}`}>
-                          <img src={url} alt={`Imagen ${index + 1}`} />
+                          <img src={DOMPurify.sanitize(url)} alt={`Imagen ${index + 1}`} />
                         </div>
                       ))}
                       {imagenes.length + 1 > 3 && <div className="icono-mas"><FaPlus size={40} /></div>}

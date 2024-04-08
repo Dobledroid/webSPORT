@@ -158,7 +158,14 @@ const ProductDetails = () => {
             <div className="col-lg-6 col-md-6">
               <div className="product__details__pic">
                 <div className="product__details__pic__item">
-                  <img className="product__details__pic__item--large" src={product && product.length > 0 ? product[0].imagenUrl : ""} alt={product?.nombre || ""} style={{ width: '540px', height: '560px' }} />
+                  {product && product.length > 0 && product[0].imagenUrl && (
+                    <img
+                      className="product__details__pic__item--large"
+                      src={product[0].imagenUrl}
+                      alt={product[0].nombre || ""}
+                      style={{ width: '540px', height: '560px' }}
+                    />
+                  )}
                 </div>
                 <div className="product__details__pic__slider owl-carousel">
                   <img data-imgbigurl="img/product/details/product-details-2.jpg"

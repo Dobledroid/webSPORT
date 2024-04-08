@@ -6,6 +6,8 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { baseURL } from '../../api.js';
 
+import DOMPurify from 'dompurify';
+
 import { PiShoppingCartFill } from "react-icons/pi";
 import "./Carrito.css";
 
@@ -28,6 +30,7 @@ const Carrito = () => {
       backgroundColor: 'rgba(0, 0, 0, 0.5)' // Fondo del modal transparente con opacidad
     }
   };
+
 
   useEffect(() => {
     const fetchCarrito = async () => {
@@ -228,6 +231,12 @@ const Carrito = () => {
     });
   };
 
+  function esURLSegura(url) {
+    const regex = /^(ftp|http|https):\/\/[^ "]+$/;
+    return regex.test(url);
+  }
+
+
   return (
     <>
 
@@ -260,7 +269,12 @@ const Carrito = () => {
                         {productos.map((producto) => (
                           <tr key={producto.ID_carrito}>
                             <td className="shoping__cart__item">
-                              <img src={producto.imagenUrl} alt={producto.nombre} style={{ width: '81px', height: '90px' }} />
+                              {esURLSegura(producto.imagenUrl) ? (
+                                <img src={producto.imagenUrl} alt={producto.nombre} style={{ width: '81px', height: '90px' }} />
+                              ) : (
+                                <img src="imagen_por_defecto.jpg" alt="Imagen por defecto" style={{ width: '81px', height: '90px' }} />
+                              )}
+
                               <h5>{producto.nombre.slice(0, 50)}...</h5>
                             </td>
                             <td className="shoping__cart__price">${producto.precioFinal}</td>

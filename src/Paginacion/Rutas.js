@@ -10,13 +10,9 @@ import Header from '../Esquema/Header';
 import Footer from '../Esquema/Footer';
 
 import Productos from './Productos/Productos';
-import Example from './Productos/Example';
 
 import Filtros from './Productos/Filtros';
-import Productos2 from './Productos/Productos2';
-// import Producto from './Productos/Producto';
-// import Producto2 from './Productos/Producto2';
-// import Carrito from './Productos/Carrito';
+
 import PrivacyPolicy from './Empresa/Privacidad/PrivacyPolicy';
 import Terminos from './Empresa/TerminosCondiciones/TerminosCondiciones';
 import CookiePolicy from './Empresa/Cookies/CookiePolicy';
@@ -130,9 +126,7 @@ const Rutas = () => {
         <Route path='/footer' element={<Footer />}></Route>
 
         <Route path='/tienda' element={<Productos />}></Route>
-        <Route path='/example' Component={Example}></Route>
         <Route path='/filtros' Component={Filtros}></Route>
-        <Route path='/productos2' Component={Productos2}></Route>
         <Route path='/producto-grid' element={<ProductGrid />}></Route>
         <Route path='/product-details/:id' element={<ProductDetails />}></Route>
         <Route path='/carrito' element={<Carrito />}></Route>

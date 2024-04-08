@@ -270,7 +270,7 @@ const Carrito = () => {
                           <tr key={producto.ID_carrito}>
                             <td className="shoping__cart__item">
                               {esURLSegura(producto.imagenUrl) ? (
-                                <img src={producto.imagenUrl} alt={producto.nombre} style={{ width: '81px', height: '90px' }} />
+                                <img src={DOMPurify.sanitize(producto.imagenUrl)} alt={producto.nombre} style={{ width: '81px', height: '90px' }} />
                               ) : (
                                 <img src="imagen_por_defecto.jpg" alt="Imagen por defecto" style={{ width: '81px', height: '90px' }} />
                               )}

@@ -28,37 +28,41 @@ function PrivacyPolicy() {
           <p className={styles.p}>
             Los datos personales que recabamos de usted, los utilizaremos para las siguientes finalidades que son
             necesarias para el servicio que solicita:
-
+          </p>
+          <p className={styles.p}>
             De manera adicional, utilizaremos su información personal para las siguientes finalidades
             secundarias que no son necesarias para el servicio solicitado, pero que nos permiten y
             facilitan brindarle una mejor atención:
-            <ul>
-              <li>Enviar información sobre promociones y servicios.</li>
-              <li>Gestionar el proceso de salud y acondicionamiento físico de los clientes.</li>
-              <li>Realizar encuestas de satisfacción para mejorar la calidad de los servicios.</li>
-              <li>Registrar a los clientes y brindarles los servicios solicitados.</li>
-              <li>Prospección comercial</li>
-              <li>Guardar formas de pago</li>
-              <li>Administrar datos de autenticación</li>
-              <li>Validar datos de registro</li>
-              <li>Verificar datos de pago</li>
-              <li>Contactar con el cliente</li>
-            </ul>
+          </p>
+          <ul>
+            <li>Enviar información sobre promociones y servicios.</li>
+            <li>Gestionar el proceso de salud y acondicionamiento físico de los clientes.</li>
+            <li>Realizar encuestas de satisfacción para mejorar la calidad de los servicios.</li>
+            <li>Registrar a los clientes y brindarles los servicios solicitados.</li>
+            <li>Prospección comercial</li>
+            <li>Guardar formas de pago</li>
+            <li>Administrar datos de autenticación</li>
+            <li>Validar datos de registro</li>
+            <li>Verificar datos de pago</li>
+            <li>Contactar con el cliente</li>
+          </ul>
+          <p className={styles.p}>
             En caso de que no desee que sus datos personales se utilicen para estos fines secundarios, indíquelo a continuación:
-            No consiento que mis datos personales se utilicen para los siguientes fines:
-            <ul>
-              <li>[  ] Enviar información sobre promociones y servicios.</li>
-              <li>[  ] Gestionar el proceso de salud y acondicionamiento físico de los clientes.</li>
-              <li>[  ] Realizar encuestas de satisfacción para mejorar la calidad de los servicios.</li>
-              <li>[  ] Registrar a los clientes y brindarles los servicios solicitados.</li>
-              <li>[  ] Prospección comercial</li>
-              <li>[  ] Guardar formas de pago</li>
-              <li>[  ] Administrar datos de autenticación</li>
-              <li>[  ] Validar datos de registro</li>
-              <li>[  ] Verificar datos de pago</li>
-              <li>[  ] Contactar con el cliente</li>
-            </ul>
-            La negativa para el uso de sus datos personales para estas finalidades no podrá ser un motivo para que le neguemos
+          </p>
+          <ul>
+            <li>[  ] Enviar información sobre promociones y servicios.</li>
+            <li>[  ] Gestionar el proceso de salud y acondicionamiento físico de los clientes.</li>
+            <li>[  ] Realizar encuestas de satisfacción para mejorar la calidad de los servicios.</li>
+            <li>[  ] Registrar a los clientes y brindarles los servicios solicitados.</li>
+            <li>[  ] Prospección comercial</li>
+            <li>[  ] Guardar formas de pago</li>
+            <li>[  ] Administrar datos de autenticación</li>
+            <li>[  ] Validar datos de registro</li>
+            <li>[  ] Verificar datos de pago</li>
+            <li>[  ] Contactar con el cliente</li>
+          </ul>
+          <p className={styles.p}>
+            La negativa para el uso de sus datos personales para estas finalidades secundarias no podrá ser un motivo para que le neguemos
             los servicios y productos que solicita o contrata con nosotros.
           </p>
           {/* Agrega más contenido de los términos y condiciones aquí */}

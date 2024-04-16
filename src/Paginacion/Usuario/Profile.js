@@ -12,6 +12,7 @@ import { FaEyeSlash } from 'react-icons/fa';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 const Profile = () => {
   const [user, setUser] = useLocalStorage('user');
+  const [isLoggedInOAuth, setIsLoggedInOAuth] = useLocalStorage('isLoggedInOAuth');
 
   const [usuario, setUsuario] = useState(null);
   const [ubicacion, setUbicacion] = useState(null);
@@ -114,6 +115,7 @@ const Profile = () => {
   };
 
   const formatISODate = (isoDate) => {
+    if (!isoDate) return ''; // Si isoDate es null, retorna una cadena vacía
     const date = new Date(isoDate);
     const year = date.getFullYear();
     let month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -217,7 +219,7 @@ const Profile = () => {
     }
   };
 
-  
+
   const calcularFuerzaContrasena = (errors) => {
     if (errors.length === 0) {
       return 'Fuerte';
@@ -233,121 +235,119 @@ const Profile = () => {
       <Header />
       <div className="wrapper">
         <Sidebar />
-        <div class="container my-4">
-          <div class="card mb-3">
-            <div class="card-header position-relative min-vh-25 mb-7">
-              <div class="bg-holder rounded-3 rounded-bottom-0" style={{ backgroundImage: `url(${backgroundImage})` }}>
+        <div className="container my-4">
+          <div className="card mb-3">
+            <div className="card-header position-relative min-vh-25 mb-7">
+              <div className="bg-holder rounded-3 rounded-bottom-0" style={{ backgroundImage: `url(${backgroundImage})` }}></div>
+              <div className="avatar avatar-5xl avatar-profile">
+                <img className="rounded-circle img-thumbnail shadow-sm" src={backgroundImage} width="200" alt="" />
               </div>
-              <div class="avatar avatar-5xl avatar-profile"><img class="rounded-circle img-thumbnail shadow-sm" src={backgroundImage} width="200" alt="" /></div>
             </div>
-            <div class="card-body">
-              <div class="row">
-                <div class="col-lg-8">
-                  <h4 class="mb-1"> {usuario?.nombre} {usuario?.primerApellido} {usuario?.segundoApellido} <span data-bs-toggle="tooltip" data-bs-placement="right" title="Verified"><small class="fa fa-check-circle text-primary" data-fa-transform="shrink-4 down-2"></small></span>
+            <div className="card-body">
+              <div className="row">
+                <div className="col-lg-8">
+                  <h4 className="mb-1"> {usuario?.nombre} {usuario?.primerApellido} {usuario?.segundoApellido} <span data-bs-toggle="tooltip" data-bs-placement="right" title="Verified"><small className="fa fa-check-circle text-primary" data-fa-transform="shrink-4 down-2"></small></span>
                   </h4>
-                  <h5 class="fs-9 fw-normal">{usuario?.rol}</h5>
-                  <p class="text-500">{ubicacion?.direccion}</p>
-                  <p class="text-500">{usuario?.correoElectronico}</p>
-                  <div class="border-bottom border-dashed my-4 d-lg-none"></div>
+                  <h5 className="fs-9 fw-normal">{usuario?.rol}</h5>
+                  <p className="text-500">{ubicacion?.direccion}</p>
+                  <p className="text-500">{usuario?.correoElectronico}</p>
+                  <div className="border-bottom border-dashed my-4 d-lg-none"></div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="row g-0">
-            <div class="col-lg-8 pe-lg-2">
-              <div class="card mb-3">
-                <div class="card-header">
-                  <h5 class="mb-0">Configuración de perfil</h5>
+          <div className="row g-0">
+            <div className={`col-lg-${isLoggedInOAuth ? '12' : '8'} pe-lg-2`}>
+              <div className="card mb-3">
+                <div className="card-header">
+                  <h5 className="mb-0">Configuración de perfil</h5>
                 </div>
-                <div class="card-body bg-body-tertiary">
-                  <form class="row g-3" onSubmit={handleSubmit}>
-                    <div class="col-lg-12">
-                      <label class="form-label" for="first-name">Nombre</label>
-                      <input class="form-control" id="first-name" type="text" value={nombre} onChange={(event) => setNombre(event.target.value)} required />
+                <div className="card-body bg-body-tertiary">
+                  <form className="row g-3" onSubmit={handleSubmit}>
+                    <div className="col-lg-12">
+                      <label className="form-label" htmlFor="first-name">Nombre</label>
+                      <input className="form-control" id="first-name" type="text" value={nombre} onChange={(event) => setNombre(event.target.value)} required />
                     </div>
-                    <div class="col-lg-6">
-                      <label class="form-label" for="last-name">Primer apellido</label>
-                      <input class="form-control" id="last-name" type="text" value={primerApellido} onChange={(event) => setPrimerApellido(event.target.value)} required />
+                    <div className="col-lg-6">
+                      <label className="form-label" htmlFor="last-name">Primer apellido</label>
+                      <input className="form-control" id="last-name" type="text" value={primerApellido} onChange={(event) => setPrimerApellido(event.target.value)} required />
                     </div>
-                    <div class="col-lg-6">
-                      <label class="form-label" for="last-name">Segundo apellido</label>
-                      <input class="form-control" id="last-name" type="text" value={segundoApellido} onChange={(event) => setSegundoApellido(event.target.value)} required />
+                    <div className="col-lg-6">
+                      <label className="form-label" htmlFor="last-name">Segundo apellido</label>
+                      <input className="form-control" id="last-name" type="text" value={segundoApellido} onChange={(event) => setSegundoApellido(event.target.value)} required />
                     </div>
-
-                    <div class="col-lg-6">
-                      <label class="form-label" for="email2">Teléfono</label>
-                      <input class="form-control" id="telefono" type="text"
-                        minLength={10}
-                        maxLength={10}
-                        value={telefono} onChange={(event) => setTelefono(event.target.value)} required />
+                    <div className="col-lg-6">
+                      <label className="form-label" htmlFor="telefono">Teléfono</label>
+                      <input className="form-control" id="telefono" type="text" minLength={10} maxLength={10} value={telefono} onChange={(event) => setTelefono(event.target.value)} required />
                     </div>
-                    <div class="col-lg-6">
-                      <label class="form-label" for="fecha-nacimiento">Fecha de nacimiento</label>
-                      <input class="form-control" id="fecha-nacimiento" type="date" required value={formatISODate(fechaNacimiento)} onChange={(event) => setFechaNacimiento(event.target.value)} />
+                    <div className="col-lg-6">
+                      <label className="form-label" htmlFor="fecha-nacimiento">Fecha de nacimiento</label>
+                      <input className="form-control" id="fecha-nacimiento" type="date" required value={formatISODate(fechaNacimiento)} onChange={(event) => setFechaNacimiento(event.target.value)} />
                     </div>
-                    <div class="col-lg-6">
-                      <label class="form-label" for="genero">Género</label>
-                      <select class="form-select" id="genero" required value={genero} onChange={(event) => setGenero(event.target.value)}>
+                    <div className="col-lg-6">
+                      <label className="form-label" htmlFor="genero">Género</label>
+                      <select className="form-select" id="genero" required value={genero} onChange={(event) => setGenero(event.target.value)}>
                         <option value="">Seleccionar género</option>
                         <option value="hombre">Hombre</option>
                         <option value="mujer">Mujer</option>
                       </select>
                     </div>
-                    <div class="col-12 d-flex justify-content-end">
-                      <button class="btn btn-primary" type="submit">Actualizar</button>
+                    <div className="col-12 d-flex justify-content-end">
+                      <button className="btn btn-primary" type="submit">Actualizar</button>
                     </div>
                   </form>
                 </div>
-
               </div>
             </div>
-            <div className="col-lg-4 ps-lg-2">
-              <div className="sticky-sidebar">
-                <div className="card mb-3">
-                  <div className="card-header">
-                    <h5 className="mb-0">Cambiar la contraseña</h5>
-                  </div>
-                  <div className="card-body bg-body-tertiary">
-                    <form onSubmit={handleSubmitPassword}>
-                      <div className="mb-3">
-                        <label className="form-label" htmlFor="old-password">Contraseña anterior</label>
-                        <input className="form-control" id="old-password" type="password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} required />
-                      </div>
-                      <div className="mb-3">
-                        <label className="form-label" htmlFor="new-password">Nueva contraseña</label>
-                        <input className="form-control" id="new-password" type={mostrarContrasena ? 'text' : 'password'} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required />
-                        <FaEyeSlash className="mt-2 ms-2 show-password-icon" onClick={toggleMostrarContrasena} />
-                        <ProgressBar
+            {!isLoggedInOAuth && (
+              <div className="col-lg-4 ps-lg-2">
+                <div className="sticky-sidebar">
+                  <div className="card mb-3">
+                    <div className="card-header">
+                      <h5 className="mb-0">Cambiar la contraseña</h5>
+                    </div>
+                    <div className="card-body bg-body-tertiary">
+                      <form onSubmit={handleSubmitPassword}>
+                        <div className="mb-3">
+                          <label className="form-label" htmlFor="old-password">Contraseña anterior</label>
+                          <input className="form-control" id="old-password" type="password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} required />
+                        </div>
+                        <div className="mb-3">
+                          <label className="form-label" htmlFor="new-password">Nueva contraseña</label>
+                          <input className="form-control" id="new-password" type={mostrarContrasena ? 'text' : 'password'} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required />
+                          <FaEyeSlash className="mt-2 ms-2 show-password-icon" onClick={toggleMostrarContrasena} />
+                          <ProgressBar
                             now={contrasenaFuerza === 'Débil' ? 25 : contrasenaFuerza === 'Medio' ? 50 : contrasenaFuerza === 'Fuerte' ? 100 : 0}
                             label={contrasenaFuerza}
                             className="w-100 mt-2"
                           />
-                      </div>
-                      <div className="mb-3">
-                        <label className="form-label" htmlFor="confirm-password">Confirmar Contraseña</label>
-                        <input className="form-control" id="confirm-password" type={mostrarConfirmContrasena ? 'text' : 'password'} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
-                        <FaEyeSlash className="mt-2 ms-2 show-password-icon" onClick={toggleMostrarConfirmContrasena} />
-                      </div>
-                      {contrasenaError.length > 0 && (
-                        <div className="col-12">
-                          <div className="alert alert-danger">
-                            <ul>
-                              {contrasenaError.map((error, index) => (
-                                <li key={index}>{error}</li>
-                              ))}
-                            </ul>
-                          </div>
                         </div>
-                      )}
-                      {alert && alert.type === 'danger' && (
-                        <Alert type="danger" message={alert.message} onClose={() => setAlert(null)} />
-                      )}
-                      <button className="btn btn-primary d-block w-100" type="submit">Actualizar contraseña</button>
-                    </form>
+                        <div className="mb-3">
+                          <label className="form-label" htmlFor="confirm-password">Confirmar Contraseña</label>
+                          <input className="form-control" id="confirm-password" type={mostrarConfirmContrasena ? 'text' : 'password'} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
+                          <FaEyeSlash className="mt-2 ms-2 show-password-icon" onClick={toggleMostrarConfirmContrasena} />
+                        </div>
+                        {contrasenaError.length > 0 && (
+                          <div className="col-12">
+                            <div className="alert alert-danger">
+                              <ul>
+                                {contrasenaError.map((error, index) => (
+                                  <li key={index}>{error}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          </div>
+                        )}
+                        {alert && alert.type === 'danger' && (
+                          <Alert type="danger" message={alert.message} onClose={() => setAlert(null)} />
+                        )}
+                        <button className="btn btn-primary d-block w-100" type="submit">Actualizar contraseña</button>
+                      </form>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

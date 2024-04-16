@@ -6,11 +6,16 @@ import { baseURL } from '../../api.js';
 import ConfettiComponent from '../utilidades/ConfetiComponent.js';
 import Spinner from '../utilidades/Spinner';
 import "./CompraFinalizada.css"
-import DOMPurify from 'dompurify'; 
+import DOMPurify from 'dompurify';
 import { FaPlus } from "react-icons/fa";
+
+import moment from 'moment';
+import 'moment/locale/es';
+moment.locale('es');
 
 const CompraFinalizada = () => {
   const [productos, setProductos] = useState([]);
+  const [membresia, setMembresia] = useState([]);
   const { id, tipo } = useParams();
   const [comprado, setComprado] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -33,19 +38,23 @@ const CompraFinalizada = () => {
     }
   };
 
-  const fetchValidarMembresia = async (ID_orden) => {
-    console.log("validarMembresia")
-    // try {
-    //   const response = await fetch(`${baseURL}/membresia-usuario-existe/${id}`);
-    //   if (response.ok) {
-    //     const data = await response.json();
-    //     setProductos(data);
-    //   } else {
-    //     console.error("Error al cargar los productos del carrito");
-    //   }
-    // } catch (error) {
-    //   console.error("Error de red:", error);
-    // }
+  const fetchValidarMembresia = async () => {
+    // console.log("validarMembresia")
+    try {
+      const response = await fetch(`${baseURL}/membresia-usuario-existe/${id}`);
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.existeRegistro) {
+          setComprado(true);
+          fetchMembresia();
+        }
+      } else {
+        console.error("Error al cargar los productos del carrito");
+      }
+    } catch (error) {
+      console.error("Error de red:", error);
+    }
   };
 
 
@@ -66,11 +75,27 @@ const CompraFinalizada = () => {
     }
   };
 
+  const fetchMembresia = async () => {
+    try {
+      const response = await fetch(`${baseURL}/membresia-usuario-existe-id-membresia/${id}`);
+      if (response.ok) {
+        const data = await response.json();
+        // console.log(data)
+        setMembresia(data);
+        setLoading(false);
+      } else {
+        console.error("Error al cargar los productos del carrito");
+      }
+    } catch (error) {
+      console.error("Error de red:", error);
+    }
+  };
+
   useEffect(() => {
     if (tipo == 1) {
       fetchValidarCompra(id)
     } else {
-      fetchValidarMembresia(id)
+      fetchValidarMembresia()
     }
   }, []);
 
@@ -80,7 +105,7 @@ const CompraFinalizada = () => {
       {comprado && <ConfettiComponent />}
       <div className='container'>
         <div className='content-height'>
-          
+
           <Spinner contentReady={!loading} />
           {!loading && (
             <div className="container">
@@ -89,7 +114,7 @@ const CompraFinalizada = () => {
                   <>
                     <div className="imagen-container mt-5">
                       {imagenes.map((url, index) => (
-                        
+
                         <div key={index} className={`imagen-item ${index + 1 >= 3 ? "opacidad" : ""}`}>
                           <img src={DOMPurify.sanitize(url)} alt={`Imagen ${index + 1}`} />
                         </div>
@@ -101,10 +126,22 @@ const CompraFinalizada = () => {
                     </div>
                   </>
                 ) : (
-                  // Si el tipo no es 1, mostrar otro contenido
-                  <div>
-                    Otra cosa que deseas mostrar para el tipo diferente de 1
-                  </div>
+                  <>
+                    <div className="centered-text">
+                      {membresia.map((memb, index) => (
+                        <div key={index}>
+                          <div className="empty-cart-message">
+                            <h6>Gracias por tu compra</h6>
+                          </div>
+                          <div className='my-2'>
+                            <p>Nombre: {memb.nombre}</p>
+                            <p>Fecha de Inicio: {moment(memb.fechaInicio).format('DD [de] MMMM [del] YYYY')}</p>
+                            <p>Fecha de Vencimiento: {moment(memb.fechaVencimiento).format('DD [de] MMMM [del] YYYY')}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </>
                 )}
               </div>
             </div>

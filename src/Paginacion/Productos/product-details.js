@@ -94,6 +94,7 @@ const ProductDetails = () => {
                   if (result.isConfirmed) {
                     window.location.href = "/carrito";
                   } else if (result.isDenied) {
+                    window.location.href = "/tienda";
                   }
                 });
               } else {
@@ -192,7 +193,8 @@ const ProductDetails = () => {
                 </div>
                 {product && product.length > 0 && product[0].existencias > 0 ? (
                   <>
-                    <div className="product__details__price">${product[0].precio}</div>
+                    <div className="product__details__price mb-0">${product[0].precio}</div>
+                    <p>IVA incluido</p>
                     <div className="product__details__quantity">
                       <div className="quantity">
                         <div className="pro-qty">

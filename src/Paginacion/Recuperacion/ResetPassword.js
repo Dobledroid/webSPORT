@@ -13,7 +13,10 @@ const ResetPassword = () => {
   const [password, setPassword] = useState('');
   const [confirmacion, setConfirmacion] = useState('');
   const navigate = useNavigate();
+
   const location = useLocation();
+  const dataUser = location.state;
+
   const [mostrarContrasena, setMostrarContrasena] = useState(false);
   const [mostrarConfirmContrasena, setMostrarConfirmContrasena] = useState(false);
   const [alert, setAlert] = useState(null);
@@ -58,7 +61,7 @@ const ResetPassword = () => {
   const toggleMostrarConfirmContrasena = () => {
     setMostrarConfirmContrasena(!mostrarConfirmContrasena);
   };
-  
+
 
   const handlePasswordChange = (event) => {
     const newPassword = event.target.value;
@@ -96,7 +99,7 @@ const ResetPassword = () => {
       console.error('Error al verificar contraseña en lista negra:', error);
     }
   };
-  
+
 
   const handleResetPassword = async (event) => {
     event.preventDefault();
@@ -116,13 +119,38 @@ const ResetPassword = () => {
         if (!response.ok) {
           throw new Error('Fallo al actualizar');
         }
-        Swal.fire({
-          title: "Actualizado",
-          text: "Recuperación terminada",
-          icon: "success",
-          confirmButtonText: "Cerrar",
-        });
-        navigate('/login');
+
+        const logData = {
+          CorreoElectronico: dataUser.correoElectronico,
+          DescripcionAccion: 'Recuperación de contraseña'
+        };
+
+        try {
+          const logResponse = await fetch(`${baseURL}/logsActualizacionDatosSensibles`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(logData)
+          });
+
+          if (!logResponse.ok) {
+            throw new Error('Error al registrar el inicio de sesión');
+          }
+
+          Swal.fire({
+            title: "Actualizado",
+            text: "Recuperación terminada",
+            icon: "success",
+            confirmButtonText: "Cerrar",
+          });
+          navigate('/login');
+        
+        } catch (error) {
+          console.error('Error al registrar el inicio de sesión:', error);
+        }
+
+        
       }
     } catch (error) {
       setAlert('Error al procesar la solicitud. Por favor, intenta nuevamente.');

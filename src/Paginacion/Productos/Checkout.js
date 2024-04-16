@@ -106,7 +106,7 @@ const Checkout = () => {
 
   const handleRealizarPedido = async () => {
     const currentURL = new URL(window.location.href);
-    const host = "http://localhost:3000/";
+    const host = "http://localhost:3000";
     // const host = currentURL.protocol + '//' + currentURL.hostname;
     // console.log(host); 
     const id = user.ID_usuario;

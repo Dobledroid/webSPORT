@@ -24,6 +24,7 @@ const Panel = () => {
     const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
     if (loggedIn) {
       const user = JSON.parse(localStorage.getItem('user'));
+      // console.log(user)
       setUser(user);
       setIsLoggedIn(loggedIn);
 
@@ -42,9 +43,9 @@ const Panel = () => {
         })
         .then(data => {
           if (data) {
-            console.log("Respuesta de la API:", data);
+            // console.log("Respuesta de la API:", data);
           } else {
-            console.log("La respuesta de la API está vacía");
+            // console.log("La respuesta de la API está vacía");
             setShowModal(true);
           }
         })
@@ -80,7 +81,7 @@ const Panel = () => {
                   <UserProfile userImage={userImage} />
                 </div>
                 <div className="col second-col">
-                  {user.tipo === "2" ? (
+                  {user.ID_rol == "2" ? (
                     <>
                       <h5>Bienvenido, rol usuario</h5>
                       <button onClick={handleLogout} className='btn btn-warning'>Cerrar Sesión</button>
@@ -103,14 +104,12 @@ const Panel = () => {
               <ul>
                 <li className="row my-3">
                   <div className="col">
-                    <UserProfile userImage={iconUserId} />
+                    <UserProfile userImage={iconUser} />
                   </div>
-                  <div className="col second-col">
-                    <span>Información personal</span>
-                    <p>Información de tu identificación oficial y tu actividad fiscal.</p>
-                    <Link to="#">
-                      <button>Información personal</button>
-                    </Link>
+                  <div className="col">
+                    <span>Datos de tu cuenta</span>
+                    <p>Datos que representan a la cuenta en Sport Gym Center.</p>
+                    <button onClick={() => { navigate('/profile'); }} >Mi cuenta</button>
                   </div>
                 </li>
                 <li className="row my-3">
@@ -134,16 +133,7 @@ const Panel = () => {
                     <button onClick={() => { navigate('/mis-compras'); }} >Mi compras</button>
                   </div>
                 </li>
-                <li className="row my-3">
-                  <div className="col">
-                    <UserProfile userImage={iconUser} />
-                  </div>
-                  <div className="col">
-                    <span>Datos de tu cuenta</span>
-                    <p>Datos que representan a la cuenta en Sport Gym Center.</p>
-                    <button onClick={() => { navigate('/profile'); }} >Mi cuenta</button>
-                  </div>
-                </li>
+
                 <li className="row my-3">
                   <div className="col">
                     <UserProfile userImage={iconAddress} />

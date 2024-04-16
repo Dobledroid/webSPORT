@@ -78,14 +78,19 @@ import SimpleSlider from './utilidades/SimpleSlider';
 import Membresias from './Membresillas/Membresias';
 import Compras from './Usuario/Compras';
 import Profile from './Usuario/Profile';
+import AdmMembresiasClientes from './Administracion/Membresias/AdmMembresiasClientes';
+import AdmTiposMembresias from './Administracion/Membresias/AdmTiposMembresias';
+import MultiImageUploadForm from './utilidades/MultiImageUploadForm';
 
 
 // import Error from './Validaciones/Error404/Error';
 const Rutas = () => {
   const [user, setUser] = useLocalStorage('user');
+  const [isLoggedIn, setIsLoggedIn] = useLocalStorage('isLoggedIn');
   const [isLoggedInLogin, setIsLoggedInLogin] = useLocalStorage('isLoggedInTemp');
   const [tokenCheckout, setTokenCheckout] = useLocalStorage('tokenCheckout');
-
+  const isAdmin = user && user.ID_rol === 1;
+  console.log(isLoggedIn)
   // React.useEffect(() => {
   //   if (tokenCheckout) {
   //     console.log("Usuario registrado:", tokenCheckout);
@@ -116,10 +121,16 @@ const Rutas = () => {
           <Route path='/membresias' element={<Membresias />}></Route>
           <Route path='/historialMembresias' element={<HistorialMembresias />}></Route>
 
-          <Route path='/mis-compras' element={<Compras/> }></Route>
-          
-          <Route path='/profile' element={<Profile/> }></Route>
+          <Route path='/mis-compras' element={<Compras />}></Route>
 
+          <Route path='/profile' element={<Profile />}></Route>
+
+        
+          <Route element={<ProtectedRoute canActivate={isAdmin} redirectPath='/perfil' />}>
+            <Route path='/admMembresiasClientes' element={<AdmMembresiasClientes />}></Route>
+            <Route path='/admtiposMembresias' element={<AdmTiposMembresias />}></Route>
+          </Route>
+        
         </Route>
 
         <Route path='/header' element={<Header />}></Route>
@@ -166,7 +177,7 @@ const Rutas = () => {
 
 
         {/* <Route path='/menuVisual' Component={ MenuAccessible }></Route> */}
-{/* 
+        {/* 
         <Route path='/membresias' Component={MembershipComponent}></Route>
         <Route path='/suscripcion' Component={Suscripcion}></Route> */}
 
@@ -186,6 +197,7 @@ const Rutas = () => {
         <Route path='/confeti' Component={ConfetiComponent}></Route>
         <Route path='/spiner' Component={Spinner}></Route>
         <Route path='/simple' Component={SimpleSlider}></Route>
+        <Route path='/multi' Component={ MultiImageUploadForm }></Route>
 
         <Route path='*' Component={Error404}></Route>
 

@@ -11,7 +11,7 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import './Login.css';
 import { baseURL } from '../../api.js';
 
-const Login = () => {
+const Login3 = () => {
   const [correo, setCorreo] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -154,4 +154,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Login3;

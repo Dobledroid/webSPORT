@@ -21,6 +21,7 @@ const Carrito = () => {
 
   const [codigoDescuento, setCodigoDescuento] = useState('');
   const [descuentoAplicado, setDescuentoAplicado] = useState(false);
+  const [iva, setIVA] = useState(0);
 
 
   const navigate = useNavigate();
@@ -206,7 +207,6 @@ const Carrito = () => {
       alert('El código de descuento ingresado no es válido.');
     }
   };
-
   const calcularSubtotal = () => {
     return productos.reduce((subtotal, producto) => subtotal + (producto.precioFinal * producto.cantidad), 0);
   };
@@ -220,10 +220,12 @@ const Carrito = () => {
     return total;
   };
 
+
   const handlePagarClick = () => {
     navigate('/checkout', {
       state: {
         subtotal: calcularSubtotal(),
+        // iva: calcularIVA(),
         // descuentoAplicado, 
         total: calcularTotal(),
         ID_usuario: user.ID_usuario
@@ -327,6 +329,7 @@ const Carrito = () => {
                     <h5>Total del carrito</h5>
                     <ul>
                       <li>Subtotal <span>${calcularSubtotal().toFixed(2)}</span></li>
+                      {/* <li>IVA <span>${calcularIVA().toFixed(2)}</span></li> Mostrar el monto del IVA */}
                       {descuentoAplicado && <li>Descuento aplicado (SPORT100) <span>-$100.00</span></li>}
                       <li>Total <span>${calcularTotal().toFixed(2)}</span></li>
                     </ul>

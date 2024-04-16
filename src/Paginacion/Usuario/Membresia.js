@@ -18,23 +18,24 @@ const Membresia = () => {
       try {
         const id = user.ID_usuario;
         const response = await fetch(`${baseURL}/membresia-usuario/${id}`);
-
+        // console.log("resp", response)
         if (!response.ok) {
           throw new Error('Error al obtener la información del usuario');
         }
 
         const datosMembresiaUsuario = await response.json();
-
+        // console.log("datosMembresiaUsuario", datosMembresiaUsuario)
         if (datosMembresiaUsuario.length > 0) {
           const datosMembresia = datosMembresiaUsuario[0];
           const id = datosMembresia.ID_tipoMembresia;
-
+          // console.log("datosMembresia[0]", datosMembresia)
           try {
             const response = await fetch(`${baseURL}/membershipTypes/${id}`);
             if (!response.ok) {
               throw new Error('Error al obtener el tipo de membresía');
             }
             const membershipType = await response.json();
+            // console.log("membershipType", membershipType)
             settipoMembresiaData(membershipType);
             setMembresiaData(datosMembresia);
 

@@ -6,6 +6,38 @@ import Alert from '../Validaciones/Alerts/Alert.js';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import './Login.css';
 import { baseURL } from '../../api.js';
+import Swal from 'sweetalert2';
+import IconGoogle from "./assets/google-icon.svg";
+import IconFacebook from "./assets/facebook-svgrepo-com.svg";
+
+import { GoogleAuthProvider, FacebookAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-auth.js"
+
+import { auth } from "./firebase.js";
+
+const EstiloDeBoton = {
+  border: '1px solid black',
+  borderRadius: '10px',
+};
+
+const BotonSocial = ({ icono, texto, onClick }) => (
+  <div className="btn d-flex gap-2 justify-content-center border mt-3 shadow-sm" style={EstiloDeBoton}>
+    <img
+      src={icono}
+      alt="icono"
+      style={{ height: '1.6rem', pointerEvents: 'none' }}
+    />
+    <button
+      style={{
+        border: 'none',
+        backgroundColor: 'transparent',
+        color: 'black',
+      }}
+      onClick={onClick}
+    >
+      <span>{texto}</span>
+    </button>
+  </div>
+);
 
 const Login = () => {
   const [dataUser, setDataUser] = useState(null);
@@ -16,6 +48,130 @@ const Login = () => {
   const [alert, setAlert] = useState(null);
 
   const [mostrarDiv, setMostrarDiv] = useState(true);
+
+  const navigate = useNavigate();
+
+
+  const handleGoogle = async () => {
+    const provider = new GoogleAuthProvider();
+
+    try {
+      const credentials = await signInWithPopup(auth, provider);
+      const data = credentials.user;
+
+      const response = await fetch(`${baseURL}/users/email-oauth/${data.email}`);
+      if (response.ok) {
+        const { existe, usuario } = await response.json();
+        if (existe) {
+          // console.log("El usuario existe:", usuario);
+
+          const user = { usuario: usuario.nombre, correo: usuario.correoElectronico, ID_usuario: usuario.ID_usuario, ID_rol: usuario.ID_rol, foto: data.photoURL };
+          // console.log("user", user)
+
+          const logData = {
+            CorreoElectronico: data.email,
+            ProveedorOAuth: 'google.com'
+          };
+
+          try {
+            const logResponse = await fetch(`${baseURL}/logsInicioSesionOAuth`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(logData)
+            });
+
+            if (!logResponse.ok) {
+              throw new Error('Error al registrar el inicio de sesión');
+            }
+            localStorage.setItem('isLoggedIn', true);
+            localStorage.setItem('isLoggedInOAuth', true);
+            console.log("user_set", user)
+            localStorage.setItem('user', JSON.stringify(user));
+            window.location.reload();
+            window.location.href = '/perfil';
+          } catch (error) {
+            console.error('Error al registrar el inicio de sesión:', error);
+          }
+
+        } else {
+          // console.log("El usuario no existe")
+          const newUserResponse = await fetch(`${baseURL}/users-oauth`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ nombre: data.displayName, correoElectronico: data.email }),
+          });
+          if (newUserResponse.ok) {
+            const newUser = await newUserResponse.json();
+            // console.log("Usuario creado exitosamente:", newUser);
+
+            // Realiza un segundo fetch para obtener la información del usuario recién creado
+            const userInfoResponse = await fetch(`${baseURL}/users/email-oauth/${data.email}`);
+            if (userInfoResponse.ok) {
+              const { existe, usuario } = await userInfoResponse.json();
+              // console.log("Información del usuario:", usuario);
+
+              const user = { usuario: usuario.nombre, correo: usuario.correoElectronico, ID_usuario: usuario.ID_usuario, ID_rol: usuario.ID_rol, foto: data.photoURL };
+              const logData = {
+                CorreoElectronico: data.email,
+                ProveedorOAuth: 'google.com'
+              };
+
+              try {
+                const logResponse = await fetch(`${baseURL}/logsInicioSesionOAuth`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify(logData)
+                });
+
+                if (!logResponse.ok) {
+                  throw new Error('Error al registrar el inicio de sesión');
+                }
+                localStorage.setItem('isLoggedIn', true);
+                localStorage.setItem('isLoggedInOAuth', true);
+                localStorage.setItem('user', JSON.stringify(user));
+                window.location.reload();
+                window.location.href = '/perfil';
+              } catch (error) {
+                console.error('Error al registrar el inicio de sesión:', error);
+              }
+            } else {
+              console.error("Error al obtener la información del usuario:", userInfoResponse.status);
+            }
+          } else {
+            console.error("Error al crear el usuario:", newUserResponse.status);
+          }
+        }
+      } else {
+        console.error("Error al verificar el correo electrónico:", response.status);
+      }
+    } catch (error) {
+      console.error("Error al iniciar sesión con Google:", error);
+    }
+  };
+
+
+  const handleFacebook = async (event) => {
+    const provider = new FacebookAuthProvider()
+    try {
+      const credentials = await signInWithPopup(auth, provider)
+      console.log("credentials", credentials.user)
+      const data = credentials.user;
+      console.log("data", data)
+      const user = { usuario: data.displayName, correo: data.email, id: data._id, tipo: data.typeUser, foto: data.photoURL };
+      console.log("user", user)
+      localStorage.setItem('isLoggedIn', true);
+      localStorage.setItem('user', JSON.stringify(user));
+      // navigate('/perfil')
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const showAlert = (type, message) => {
     setAlert({ type, message });
@@ -69,7 +225,6 @@ const Login = () => {
   const [showResendButton, setShowResendButton] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0);
 
-  const navigate = useNavigate();
 
   const handleMFA = async (event) => {
     if (event && typeof event.preventDefault === 'function') {
@@ -132,13 +287,37 @@ const Login = () => {
         throw new Error(loginResponse.msg);
       }
 
+
       const user = { usuario: loginData.nombre, correo, ID_usuario: loginData.ID_usuario, ID_rol: loginData.ID_rol };
-      // console.log("user", user)
-      localStorage.setItem('jwtToken', tokenJWT);
-      localStorage.setItem('isLoggedIn', true);
-      localStorage.setItem('user', JSON.stringify(user));
-      window.location.reload();
-      window.location.href = '/perfil';
+
+      const logData = {
+        CorreoElectronico: correo,
+        URLSolicitada: window.location.href,
+        CodigoEstadoHTTP: loginResponse.status
+      };
+
+      try {
+        const logResponse = await fetch(`${baseURL}/logsInicioSesion`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(logData)
+        });
+
+        if (!logResponse.ok) {
+          throw new Error('Error al registrar el inicio de sesión');
+        }
+        localStorage.setItem('jwtToken', tokenJWT);
+        localStorage.setItem('isLoggedInOAuth', false);
+        localStorage.setItem('isLoggedIn', true);
+        localStorage.setItem('user', JSON.stringify(user));
+        window.location.reload();
+        window.location.href = '/perfil';
+      } catch (error) {
+        console.error('Error al registrar el inicio de sesión:', error);
+      }
+
 
     } catch (error) {
       console.log(error)
@@ -217,7 +396,23 @@ const Login = () => {
                           </p>
                         </div>
                       </div>
-
+                      <div className="p-3">
+                        <div className="border-bottom text-center">
+                          {/* <span className="bg-white px-3">or</span> */}
+                        </div>
+                      </div>
+                      <div>
+                        <BotonSocial
+                          icono={IconGoogle}
+                          texto="Continuar con Google"
+                          onClick={handleGoogle}
+                        />
+                        <BotonSocial
+                          icono={IconFacebook}
+                          texto="Continuar con Facebook"
+                          onClick={handleFacebook}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>

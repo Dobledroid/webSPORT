@@ -39,7 +39,9 @@ import Sidebar from './Sidebar/Sidebar';
 
 // import ProductosComponent from './Productos/ProductosComponent';
 import AdmProductos from './Administracion/Productos/AdmProductos';
+
 import AgregarProducto from './Administracion/Productos/AgregarProducto';
+
 import EditarProducto from './Administracion/Productos/EditarProducto';
 // import Header2 from '../Esquema/Headerq';
 // import Bodys from '../Esquema/Bodys';
@@ -83,6 +85,11 @@ import AdmTiposMembresias from './Administracion/Membresias/AdmTiposMembresias';
 import MultiImageUploadForm from './utilidades/MultiImageUploadForm';
 
 
+import IMCCalculator from './utilidades/IMCCalculator';
+import DetalleCompra from './Usuario/DetalleCompra';
+import Clientes from './Usuario/patron';
+import MyImageUploader from './Administracion/Productos/MyImageUploader';
+
 // import Error from './Validaciones/Error404/Error';
 const Rutas = () => {
   const [user, setUser] = useLocalStorage('user');
@@ -124,7 +131,7 @@ const Rutas = () => {
           <Route path='/mis-compras' element={<Compras />}></Route>
 
           <Route path='/profile' element={<Profile />}></Route>
-
+          <Route path='/detalle-compra/:ID_pedido' element={<DetalleCompra />}></Route>
         
           <Route element={<ProtectedRoute canActivate={isAdmin} redirectPath='/perfil' />}>
             <Route path='/admMembresiasClientes' element={<AdmMembresiasClientes />}></Route>
@@ -135,6 +142,8 @@ const Rutas = () => {
 
         <Route path='/header' element={<Header />}></Route>
         <Route path='/footer' element={<Footer />}></Route>
+
+        <Route path='/patron' element={<Clientes />}></Route>
 
         <Route path='/tienda' element={<Productos />}></Route>
         <Route path='/filtros' Component={Filtros}></Route>
@@ -169,6 +178,7 @@ const Rutas = () => {
 
         <Route path='/AdmProductos' Component={AdmProductos}></Route>
         <Route path='/AgregarProducto' Component={AgregarProducto}></Route>
+
         <Route path='/EditarProducto' Component={EditarProducto}></Route>
 
 
@@ -198,6 +208,10 @@ const Rutas = () => {
         <Route path='/spiner' Component={Spinner}></Route>
         <Route path='/simple' Component={SimpleSlider}></Route>
         <Route path='/multi' Component={ MultiImageUploadForm }></Route>
+
+        <Route path='/imc' Component={ IMCCalculator }></Route>
+
+        <Route path='/m' Component={ MyImageUploader }></Route>
 
         <Route path='*' Component={Error404}></Route>
 

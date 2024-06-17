@@ -105,59 +105,66 @@ const Checkout = () => {
   }
 
   const handleRealizarPedido = async () => {
+    if (!direccionSeleccionada) {
+      alert('Debe seleccionar una dirección de envío');
+      return;
+    }
+
+    if (!mercadoPagoSelected && !paypalSelected) {
+      alert('Debe seleccionar un método de pago');
+      return;
+    }
+
     const currentURL = new URL(window.location.href);
     const host = "http://localhost:3000";
     // const host = currentURL.protocol + '//' + currentURL.hostname;
     // console.log(host); 
     const id = user.ID_usuario;
-    if (mercadoPagoSelected || paypalSelected) {
-      const createOrderResponse = await fetch(`${baseURL}/paypal/create-order`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ID_usuario: id,
-          total,
-          currentURL: host
-        }),
-      });
 
-      if (createOrderResponse.ok) {
-        const data = await createOrderResponse.json();
-        // console.log(data);
+    const createOrderResponse = await fetch(`${baseURL}/paypal/create-order`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        ID_usuario: id,
+        total,
+        currentURL: host,
+        ID_direccion: direccionSeleccionada,
+      }),
+    });
 
-        if (data.links && Array.isArray(data.links) && data.links.length >= 2) {
-          const redirectUrl = data.links[1].href;
+    if (createOrderResponse.ok) {
+      const data = await createOrderResponse.json();
+      // console.log(data);
 
-          if (esURLSegura(redirectUrl)) {
-            window.location.href = redirectUrl;
-          } else {
-            console.error("La URL de redirección no es segura.");
-          }
+      if (data.links && Array.isArray(data.links) && data.links.length >= 2) {
+        const redirectUrl = data.links[1].href;
+
+        if (esURLSegura(redirectUrl)) {
+          window.location.href = redirectUrl;
         } else {
-          console.error("No se encontraron suficientes enlaces válidos en los datos proporcionados.");
+          console.error("La URL de redirección no es segura.");
         }
       } else {
-        alert(`Hubo un error con la petición: ${createOrderResponse.status} ${createOrderResponse.statusText}`);
+        console.error("No se encontraron suficientes enlaces válidos en los datos proporcionados.");
       }
-
     } else {
-      alert('Debe seleccionar un método de pago');
+      alert(`Hubo un error con la petición: ${createOrderResponse.status} ${createOrderResponse.statusText}`);
     }
   };
 
   return (
     <>
       <Header />
-      <section class="checkout spad">
-        <div class="container">
-          <div class="checkout__form">
+      <section className="checkout spad">
+        <div className="container">
+          <div className="checkout__form">
             <h4>Detalles de facturación</h4>
-            <div class="row">
-              <div class="col-lg-8 col-md-6">
-                <div class="row">
-                  <div class="checkout__order">
+            <div className="row">
+              <div className="col-lg-8 col-md-6">
+                <div className="row">
+                  <div className="checkout__order">
                     <h4>Mis direcciones</h4>
                     <div>
                       {direccion ? (
@@ -220,33 +227,33 @@ const Checkout = () => {
                   </div>
                 </div>
               </div>
-              <div class="col-lg-4 col-md-6">
-                <div class="checkout__order">
+              <div className="col-lg-4 col-md-6">
+                <div className="checkout__order">
                   <h4>Su pedido</h4>
-                  <div class="checkout__order__products">Productos <span>Total</span></div>
+                  <div className="checkout__order__products">Productos <span>Total</span></div>
                   <ul>
                     {productos.map(producto => (
                       <li key={producto.ID_producto}> {producto.nombre.slice(0, 15)}...(x{producto.cantidad}) <span>${(producto.precioFinal * producto.cantidad).toFixed(2)}</span></li>
                     ))}
                   </ul>
-                  <div class="checkout__order__subtotal">Subtotal <span>${subtotal.toFixed(2)}</span></div>
-                  {descuentoAplicado && <div class="checkout__order__total">Descuento aplicado (SPORT100): <span>-$100.00</span></div>}
-                  <div class="checkout__order__total">Total <span>${total.toFixed(2)}</span></div>
-                  <div class="checkout__input__checkbox">
-                    <label for="mercadopago">
+                  <div className="checkout__order__subtotal">Subtotal <span>${subtotal.toFixed(2)}</span></div>
+                  {descuentoAplicado && <div className="checkout__order__total">Descuento aplicado (SPORT100): <span>-$100.00</span></div>}
+                  <div className="checkout__order__total">Total <span>${total.toFixed(2)}</span></div>
+                  <div className="checkout__input__checkbox">
+                    <label htmlFor="mercadopago">
                       Mercado pago
                       <input type="checkbox" id="mercadopago" checked={mercadoPagoSelected} onChange={handleMercadoPagoChange} />
-                      <span class="checkmark"></span>
+                      <span className="checkmark"></span>
                     </label>
                   </div>
-                  <div class="checkout__input__checkbox">
-                    <label for="paypal">
+                  <div className="checkout__input__checkbox">
+                    <label htmlFor="paypal">
                       Paypal
                       <input type="checkbox" id="paypal" checked={paypalSelected} onChange={handlePaypalChange} />
-                      <span class="checkmark"></span>
+                      <span className="checkmark"></span>
                     </label>
                   </div>
-                  <button type="button" class="site-btn" onClick={handleRealizarPedido}>REALIZAR PEDIDO</button>
+                  <button type="button" className="site-btn" onClick={handleRealizarPedido}>REALIZAR PEDIDO</button>
                 </div>
               </div>
             </div>

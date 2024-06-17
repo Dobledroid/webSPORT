@@ -4,6 +4,7 @@ import Header from "../../Esquema/Header.js";
 import Footer from "../../Esquema/Footer.js";
 import { useLocalStorage } from 'react-use';
 import { baseURL } from '../../api.js';
+import Sidebar from "../../Esquema/Sidebar.js";
 
 const Membresia = () => {
   const [membresiaData, setMembresiaData] = useState(null);
@@ -11,6 +12,7 @@ const Membresia = () => {
 
   const [user, setUser] = useLocalStorage('user');
   const navigate = useNavigate();
+  const [membresiaVencida, setMembresiaVencida] = useState(false);
 
   useEffect(() => {
     const fetchMembresia = async () => {
@@ -39,11 +41,17 @@ const Membresia = () => {
             settipoMembresiaData(membershipType);
             setMembresiaData(datosMembresia);
 
+            const fechaVencimiento = new Date(datosMembresia.fechaVencimiento);
+            const fechaActual = new Date();
+            if (fechaVencimiento < fechaActual) {
+              setMembresiaVencida(true);
+            }
+
           } catch (error) {
             console.error(error);
           }
         } else {
-          setMembresiaData(null); 
+          setMembresiaData(null);
         }
       } catch (error) {
         console.error(error);
@@ -58,55 +66,75 @@ const Membresia = () => {
   return (
     <>
       <Header />
-      {membresiaData ? (
-        <>
-          <section className="product-details spad">
-            <div className="container">
-              <div className="row">
-                <div className="col-lg-6 col-md-6">
-                  <div className="product__details__pic">
-                    <div className="product__details__pic__item">
-                      {membresiaData && membresiaData.imagenUrl && (
-                        <img className="product__details__pic__item--large" src={membresiaData.imagenUrl} alt={membresiaData.imagenUrl} style={{ width: '540px', height: '560px' }} />
-                      )}
+      <div className="wrapper">
+        <Sidebar />
+        {membresiaData ? (
+          <>
+            <div className='main'>
+              <section className="product-details spad">
+
+                <div className="container">
+
+                  <div className="row">
+                    
+                    <div className="col-lg-6 col-md-6">
+                  <button className="btn btn-secondary mb-3" onClick={() => navigate('/perfil')}>Regresar al perfil</button>
+
+                      <div className="product__details__pic">
+                        <div className="product__details__pic__item">
+                          {membresiaData && membresiaData.imagenUrl && (
+                            <img className="product__details__pic__item--large" src={membresiaData.imagenUrl} alt={membresiaData.imagenUrl} style={{ width: '540px', height: '560px' }} />
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-lg-6 col-md-6">
+                      <div className="product__details__text">
+                        <h3>{user.correo}</h3>
+                        {membresiaVencida && (
+                          <div className="alert alert-danger">
+                            <strong>Membresía vencida:</strong> Por favor renueva tu membresía.
+                          </div>
+                        )}
+                        <ul>
+                          <li><b>Membresía</b><span> {tipoMembresiaData.nombre} </span></li>
+                          <li><b>Costo</b><span> $ {tipoMembresiaData.costo} MXN</span></li>
+                          <li>
+                            <b>Fecha de inicio</b> <span>{new Date(membresiaData.fechaInicio).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                          </li>
+                          <li>
+                            <b>Fecha vencimiento</b> <span><samp>{new Date(membresiaData.fechaVencimiento).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}</samp></span>
+                          </li>
+                          <li><b>Compartir en</b>
+                            <div className="share">
+                              <a href="#"><i className="fa fa-facebook"></i></a>
+                              <a href="#"><i className="fa fa-twitter"></i></a>
+                              <a href="#"><i className="fa fa-instagram"></i></a>
+                              <a href="#"><i className="fa fa-pinterest"></i></a>
+                            </div>
+                          </li>
+                        </ul>
+                        <button className="primary-btn" onClick={() => navigate("/historialMembresias")} style={{ border: 'none' }}>
+                          HISTORIAL DE MEMBRESÍAS COMPRADAS
+                        </button>
+                        <br /><br />
+                        {/* <button className="primary-btn" onClick={() => navigate("/perfil")} style={{ border: 'none' }}>
+                        REGRESAR AL PERFIL
+                      </button> */}
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div className="col-lg-6 col-md-6">
-                  <div className="product__details__text">
-                    <h3>{user.correo}</h3>
-                    <ul>
-                      <li><b>Membresía</b><span> {tipoMembresiaData.nombre} </span></li>
-                      <li><b>Costo</b><span> $ {tipoMembresiaData.costo} MXN</span></li>
-                      <li>
-                        <b>Fecha de inicio</b> <span>{new Date(membresiaData.fechaInicio).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
-                      </li>
-                      <li>
-                        <b>Fecha vencimiento</b> <span><samp>{new Date(membresiaData.fechaVencimiento).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}</samp></span>
-                      </li>
-                      <li><b>Compartir en</b>
-                        <div className="share">
-                          <a href="#"><i className="fa fa-facebook"></i></a>
-                          <a href="#"><i className="fa fa-twitter"></i></a>
-                          <a href="#"><i className="fa fa-instagram"></i></a>
-                          <a href="#"><i className="fa fa-pinterest"></i></a>
-                        </div>
-                      </li>
-                    </ul>
-                    <button className="primary-btn" onClick={()=> navigate("/historialMembresias")} style={{ border: 'none' }}>
-                      HISTORIAL DE MEMBRESÍAS COMPRADAS
-                    </button>
-                  </div>
-                </div>
-              </div>
+              </section>
             </div>
-          </section>
-        </>
-      ) : (
-        <div style={{ padding: '20px', textAlign: 'center' }}>
-          <p>No cuenta con una membresía activa</p>
-        </div>
-      )}
+
+          </>
+        ) : (
+          <div style={{ padding: '20px', textAlign: 'center' }}>
+            <p>No cuenta con una membresía activa</p>
+          </div>
+        )}
+      </div>
       <Footer />
     </>
 

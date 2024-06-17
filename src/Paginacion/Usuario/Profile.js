@@ -8,6 +8,7 @@ import Swal from 'sweetalert2';
 import Sidebar from "../../Esquema/Sidebar.js";
 import Alert from '../Validaciones/Alerts/Alert.js';
 import { FaEyeSlash } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 import ProgressBar from 'react-bootstrap/ProgressBar';
 const Profile = () => {
@@ -31,6 +32,8 @@ const Profile = () => {
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUsuario = async () => {
@@ -236,6 +239,7 @@ const Profile = () => {
       <div className="wrapper">
         <Sidebar />
         <div className="container my-4">
+        <button className="btn btn-secondary mb-3" onClick={() => navigate('/perfil')}>Regresar al perfil</button>
           <div className="card mb-3">
             <div className="card-header position-relative min-vh-25 mb-7">
               <div className="bg-holder rounded-3 rounded-bottom-0" style={{ backgroundImage: `url(${backgroundImage})` }}></div>

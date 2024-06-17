@@ -69,7 +69,7 @@ const MisDirecciones = () => {
         const response = await fetch(`${baseURL}/direccion-envio/${direccionEliminar}`, {
           method: 'DELETE'
         });
-  
+
         if (response.ok) {
           setIsModalOpen(false);
           window.location.reload();
@@ -89,7 +89,7 @@ const MisDirecciones = () => {
       }
     }
   };
-  
+
   const handleElegirComoPredeterminado = async (ID_direccion) => {
     try {
       const response = await fetch(`${baseURL}/direccion-envio-predeterminada`, {
@@ -99,11 +99,11 @@ const MisDirecciones = () => {
         },
         body: JSON.stringify({ ID_usuario: user.ID_usuario, ID_direccion })
       });
-  
+
       if (!response.ok) {
         throw new Error('Error al establecer la dirección como predeterminada');
       }
-  
+
       // Mostrar SweetAlert2 alerta de éxito
       Swal.fire({
         icon: 'success',
@@ -124,8 +124,8 @@ const MisDirecciones = () => {
       });
     }
   };
-  
-  
+
+
   const cancelarEliminacion = () => {
     setIsModalOpen(false);
   };
@@ -138,6 +138,7 @@ const MisDirecciones = () => {
         <div className="main mt-4 p-3">
           <h4 className="text-center mb-4">Mis direcciones</h4>
           <section className="mb-4 custom-section">
+            <button className="btn btn-secondary mb-3" onClick={() => navigate('/perfil')}>Regresar al perfil</button> {/* Botón de regreso */}
             <div className="card">
               <Link to={'/agregar-direccion-envio/'} className="btn btn-danger mt-1 mb-4 wd-50">
                 Agregar una nueva direccion

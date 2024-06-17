@@ -7,8 +7,6 @@ import Swal from 'sweetalert2';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 
-import { useNavigate } from 'react-router-dom';
-
 import DOMPurify from 'dompurify';
 
 const AdmProductos = () => {
@@ -28,7 +26,7 @@ const AdmProductos = () => {
   const [ID_marca, setIDMarca] = useState('');
 
   const [error, setError] = useState('');
-  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     ID_producto: '',
     nombre: '',
@@ -195,6 +193,23 @@ const AdmProductos = () => {
     setShowModal(true);
   };
 
+  const handleAddNew = () => {
+    setIsEditing(false);
+    setFormData({
+      ID_producto: '',
+      nombre: '',
+      descripcion: '',
+      precio: '',
+      descuento: '',
+      precioFinal: '',
+      existencias: '',
+      ID_categoria: '',
+      ID_marca: '',
+      ID_subcategoria: '',
+    });
+    setShowModal(true);
+  };
+
   const classStyles = {
     contentHeight: {
       minHeight: '450px'
@@ -218,7 +233,7 @@ const AdmProductos = () => {
             <div className="card">
               <div className="card-header">
                 <h5 className="card-title">Productos</h5>
-                <button className="btn btn-primary" onClick={()=> navigate("/AgregarProducto")}>Agregar Nuevo</button>
+                <button className="btn btn-primary" onClick={handleAddNew}>Agregar Nuevo</button>
               </div>
               <div className="table-responsive scrollbar">
                 <table className="table table-hover table-striped overflow-hidden">

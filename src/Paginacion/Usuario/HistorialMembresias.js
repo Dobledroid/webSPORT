@@ -4,6 +4,7 @@ import Header from '../../Esquema/Header';
 import Footer from '../../Esquema/Footer';
 import { useLocalStorage } from 'react-use';
 import { baseURL } from '../../api.js';
+import Sidebar from "../../Esquema/Sidebar.js";
 
 const HistorialMembresias = () => {
   const [membresias, setMembresias] = useState([]);
@@ -21,7 +22,7 @@ const HistorialMembresias = () => {
           throw new Error('Error al obtener el historial de membresías');
         }
         const data = await response.json();
-        console.log(data); 
+        console.log(data);
         setMembresias(data);
         setCargando(false);
       } catch (error) {
@@ -34,30 +35,24 @@ const HistorialMembresias = () => {
   return (
     <>
       <Header />
-      <div className='content'>
-        <div className='containerAdm'>
-          <div className="pagetitle">
-            <h1>Mi registro de membresias</h1>
-          </div>
+      <div className="wrapper">
+        <Sidebar />
+        <div className="main mt-4 p-3">
+          <h4 className='text-center mb-4'>Mi registro de membresias</h4>
 
-          <p>Mi registro de membresias</p>
+          <section className="custom-section">
+            <button className="btn btn-secondary mb-3" onClick={() => navigate('/perfil')}>Regresar al perfil</button> {/* Botón de regreso */}
+            {/* <p className='text-center mb-4'>Mi registro de membresias</p> */}
 
-          <section>
             <div className="row">
-              <div className="card">
+              <div className="card mb-3">
 
                 {cargando ? (
                   <div>Cargando productos...</div>
                 ) : (
                   <div className="card-body">
                     <div className="d-flex justify-content-between mb-0">
-                      <h5 className="card-title">Registros de la tabla Usuarios</h5>
-
-                      <p className="card-title">
-                        <button className='btn btn-primary' onClick={() => navigate('/agregarProducto')}>
-                          Agregar
-                        </button>
-                      </p>
+                      <h5 className="card-title">Registros de la compra de membresías</h5>
                     </div>
 
                     <div className="table-responsive">
@@ -69,8 +64,8 @@ const HistorialMembresias = () => {
                             <th scope="col">Fecha de inicio</th>
                             <th scope="col">Fecha de vencimiento</th>
                             <th scope="col">Precio</th>
-                            <th scope="col">Operación</th>
-                            <th scope="col">Estatus</th>
+                            {/* <th scope="col">Operación</th> */}
+                            {/* <th scope="col">Estatus</th> */}
                           </tr>
                         </thead>
                         <tbody>
@@ -78,19 +73,11 @@ const HistorialMembresias = () => {
                             <tr key={membresia.ID_historialMembresia}>
                               <th scope="row">{membresia.ID_historialMembresia}</th>
                               <td>{membresia.nombre}</td>
-                              <td>{membresia.fechaInicio}</td>
-                              <td>{membresia.fechaVencimiento}</td>
+                              <td>{new Date(membresia.fechaInicio).toLocaleDateString('es-ES')}</td>
+                              <td>{new Date(membresia.fechaVencimiento).toLocaleDateString('es-ES')}</td>
                               <td>{membresia.precio}</td>
-                              <td>{membresia.operacion_id}</td>
-                              <td>{membresia.operacion_status}</td>
-                              {/* <td className="d-flex justify-content-center">
-                              <Link to={`/EditarProducto/${producto.ID_producto}`} className="btn btn-primary btn-sm me-2">
-                                <i className="bi bi-pencil-fill text-dark"></i>
-                              </Link>
-                              <span className="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#basicModal">
-                                <i className="bi bi-trash-fill text-dark"></i>
-                              </span>
-                            </td> */}
+                              {/* <td>{membresia.operacion_id}</td> */}
+                              {/* <td>{membresia.operacion_status}</td> */}
                             </tr>
                           ))}
                         </tbody>

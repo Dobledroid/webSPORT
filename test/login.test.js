@@ -6,9 +6,9 @@ fixture`Login`.page`http://localhost:3000/login`;
 test('Inicio de sesión exitoso', async t => {
   await t
     .typeText('input[name="email"]', '20210680@uthh.edu.mx')
-    .typeText('input[name="password"]', '20210720@uthh.edu.mX')
+    .typeText('input[name="password"]', '20210680@uthh.edu.mX')
     .click('button[type="submit"]')
-    .expect(Selector('h5.card-title').innerText).eql('Verifica tu identidad'); 
+    .expect(Selector('.card-body h5.card-title').innerText).eql('Verifica tu identidad');
 });
 
 test('Mostrar mensaje de error en caso de credenciales incorrectas', async t => {

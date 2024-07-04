@@ -108,7 +108,7 @@ const Header = () => {
                   <li className="active"><Link to="/">Inicio</Link></li>
                   <li><Link to="/tienda">Tienda</Link></li>
                   <li><Link to="/membresias">Membresías</Link></li>
-                  <li><Link to="/imc">Calculadora</Link></li>
+                  {/* <li><Link to="/imc">Calculadora</Link></li> */}
                   <li>
                     <Link to="#">Empresa</Link>
                     <ul className="header__menu__dropdown">

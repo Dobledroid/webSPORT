@@ -66,16 +66,16 @@ const ResetPassword = () => {
   const handlePasswordChange = (event) => {
     const newPassword = event.target.value;
     setPassword(newPassword);
-    const errors = validarContrasena(newPassword, confirmacion);
-    setContrasenaError(errors);
-    setContrasenaFuerza(calcularFuerzaContrasena(errors));
-    if (errors.length === 0) {
-      // Si no hay errores de validación, verificar si la contraseña está en la lista negra
-      verificarContraseñaEnListaNegra(newPassword);
-    } else {
-      // Si hay errores de validación, establecer la contraseña como no está en la lista negra
-      setBlacklisted(false);
-    }
+    // const errors = validarContrasena(newPassword, confirmacion);
+    // setContrasenaError(errors);
+    // setContrasenaFuerza(calcularFuerzaContrasena(errors));
+    // if (errors.length === 0) {
+    //   // Si no hay errores de validación, verificar si la contraseña está en la lista negra
+    //   verificarContraseñaEnListaNegra(newPassword);
+    // } else {
+    //   // Si hay errores de validación, establecer la contraseña como no está en la lista negra
+    //   setBlacklisted(false);
+    // }
   };
 
   const calcularFuerzaContrasena = (errors) => {
@@ -105,7 +105,7 @@ const ResetPassword = () => {
     event.preventDefault();
     try {
       const data = location.state;
-      if (contrasenaError.length === 0 && !blacklisted) {
+      // if (contrasenaError.length === 0 && !blacklisted) {
         const response = await fetchData(`${baseURL}/users/update-password/${data.ID_usuario}`, {
           method: 'PUT',
           headers: {
@@ -145,13 +145,13 @@ const ResetPassword = () => {
             confirmButtonText: "Cerrar",
           });
           navigate('/login');
-        
+
         } catch (error) {
           console.error('Error al registrar el inicio de sesión:', error);
         }
 
-        
-      }
+
+      // }
     } catch (error) {
       setAlert('Error al procesar la solicitud. Por favor, intenta nuevamente.');
     }
@@ -181,7 +181,6 @@ const ResetPassword = () => {
                             placeholder="Ingrese su contraseña"
                             required
                             maxLength="100"
-                            minLength="8"
                             value={password}
                             onChange={handlePasswordChange}
                           />
@@ -221,7 +220,6 @@ const ResetPassword = () => {
                             placeholder="Confirme su contraseña"
                             required
                             maxLength="100"
-                            minLength="8"
                             value={confirmacion}
                             onChange={(event) => setConfirmacion(event.target.value)}
                             className="form-control"
@@ -230,7 +228,7 @@ const ResetPassword = () => {
                         </div>
                       </div>
                       <div className="col-12">
-                        <button className="btn btn-primary w-100" type="submit" disabled={contrasenaError.length > 0 || blacklisted}>Acceso</button>
+                        <button className="btn btn-primary w-100" type="submit" >Acceso</button>
                       </div>
                       {alert && alert.type === 'danger' && (
                         <Alert type="danger" message={alert.message} onClose={() => setAlert(null)} />

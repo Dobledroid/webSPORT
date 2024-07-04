@@ -328,7 +328,7 @@ const AgregarProducto = () => {
                         <select className="form-select" id="product-subcategory" name="product-subcategory" value={subcategoriaId} onChange={(e) => setSubcategoriaId(e.target.value)}>
                           <option value="">Seleccione una subcategoría</option>
                           {subcategorias.map((subcategoria) => (
-                            <option key={subcategoria.id} value={subcategoria.id}>{subcategoria.nombre}</option>
+                            <option key={subcategoria.ID_subcategoria} value={subcategoria.ID_subcategoria}>{subcategoria.nombre}</option>
                           ))}
                         </select>
                         {isLoadingMarcas && <p>Cargando marcas...</p>}
@@ -338,7 +338,7 @@ const AgregarProducto = () => {
                         <select className="form-select" id="product-brand" name="product-brand" value={marcaId} onChange={(e) => setMarcaId(e.target.value)}>
                           <option value="">Seleccione una marca</option>
                           {marcas.map((marca) => (
-                            <option key={marca.id} value={marca.id}>{marca.nombre}</option>
+                            <option key={marca.ID_marca} value={marca.ID_marca}>{marca.nombre}</option>
                           ))}
                         </select>
                       </div>

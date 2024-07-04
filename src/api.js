@@ -1,5 +1,5 @@
-export const baseURL = 'http://localhost:4000/api';
-// export const baseURL = 'https://api-rest-sport.vercel.app/api';
+export const baseURL = process.env.REACT_APP_BASE_URL;
+console.log("URL: ", baseURL)
 
 export const fetchData = async (url, options) => {
   try {

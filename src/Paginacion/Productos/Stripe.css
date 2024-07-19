@@ -1,0 +1,86 @@
+.stripe-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f7f7f7;
+  }
+  
+  .stripe-card {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    width: 100%;
+  }
+  
+  .stripe-card h2 {
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    text-align: center;
+    color: #333;
+  }
+  
+  .card-preview {
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .card {
+    width: 100%;
+    max-width: 300px;
+    height: 200px;
+    background: linear-gradient(135deg, #007bff, #00c6ff);
+    border-radius: 10px;
+    color: #fff;
+    padding: 1rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .card-header {
+    font-size: 1.2rem;
+    text-align: center;
+  }
+  
+  .card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .card-number, .card-expiry-cvc {
+    font-size: 1.2rem;
+    text-align: center;
+  }
+  
+  .card-expiry-cvc {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1rem;
+  }
+  
+  .card-element-container {
+    margin-bottom: 1rem;
+  }
+  
+  button {
+    background-color: #5469d4;
+    color: #fff;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    width: 100%;
+  }
+  
+  button:disabled {
+    background-color: #ddd;
+    cursor: not-allowed;
+  }
+  

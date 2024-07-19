@@ -1,9 +1,13 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
+import "./Breadcrumbs.css"; // Asegúrate de importar el archivo CSS
 
 const Breadcrumbs = () => {
   const location = useLocation();
   const pathnames = location.pathname.split("/").filter((x) => x);
+
+  // Función para capitalizar la primera letra
+  const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
   return (
     <nav aria-label="breadcrumb">
@@ -16,11 +20,11 @@ const Breadcrumbs = () => {
           const isLast = index === pathnames.length - 1;
           return isLast ? (
             <li className="breadcrumb-item active" aria-current="page" key={routeTo}>
-              {name}
+              {capitalize(name)}
             </li>
           ) : (
             <li className="breadcrumb-item" key={routeTo}>
-              <Link to={routeTo}>{name}</Link>
+              <Link to={routeTo}>{capitalize(name)}</Link>
             </li>
           );
         })}

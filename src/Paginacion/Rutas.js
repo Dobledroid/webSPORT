@@ -66,6 +66,7 @@ import ProductDetails from './Productos/product-details';
 import ProductGrid from './Productos/product-grid';
 import Carrito from './Productos/Carrito';
 import Checkout from './Productos/Checkout';
+import Stripe from './Productos/Stripe';
 import PruebaAbrirModal from './Productos/PruebaAbrirModal';
 import AgregarDireccionesEnvio from './Productos/AgregarDireccionesEnvio';
 import Pregunta from './Recuperacion/Pregunta';
@@ -121,11 +122,10 @@ const Rutas = () => {
           <Route path='/editar-direccion-envio/:ID_direccion' element={<EditarDireccionesEnvio />}></Route>
           <Route path='/checkout' element={<Checkout />}></Route>
           <Route path='/seleccionar-direccion-envio' element={<CheckoutDirecciones />}></Route>
-
+          
           <Route path='/compra-finalizada/:id/:tipo' element={<CompraFinalizada />}></Route>
 
 
-          <Route path='/membresias' element={<Membresias />}></Route>
           <Route path='/historialMembresias' element={<HistorialMembresias />}></Route>
 
           <Route path='/mis-compras' element={<Compras />}></Route>
@@ -161,11 +161,13 @@ const Rutas = () => {
 
         <Route path='/registro' element={<Registro />}></Route>
         <Route path='/login' element={<Login />}></Route>
+        <Route path='/stripe' element={<Stripe />}></Route>
 
         {/* <Route path='/login3' element={<Login3 />}></Route> */}
 
 
         <Route path='/membresia' Component={Membresia}></Route>
+        <Route path='/membresias' element={<Membresias />}></Route>
 
 
 

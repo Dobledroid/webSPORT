@@ -4,28 +4,85 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import { useLocalStorage } from 'react-use';
 import Header from "../../Esquema/Header";
 import Footer from "../../Esquema/Footer";
-import { useLocation, Link, useNavigate } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import { baseURL } from '../../api.js';
+import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import './Checkout.css';
 
+const StripeForm = ({ total, onPaymentSuccess }) => {
+  const stripe = useStripe();
+  const elements = useElements();
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (!stripe || !elements) {
+      return;
+    }
+
+    const cardElement = elements.getElement(CardElement);
+
+    const { error, paymentMethod } = await stripe.createPaymentMethod({
+      type: 'card',
+      card: cardElement,
+    });
+
+    if (error) {
+      console.error(error);
+    } else {
+      const { id } = paymentMethod;
+
+      try {
+        const response = await fetch(`${baseURL}/payment_stripe`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ id, amount: total * 100 }), // Ajusta el monto según sea necesario
+        });
+
+        const paymentResult = await response.json();
+
+        if (paymentResult.success) {
+          onPaymentSuccess();
+          console.log('Payment successful', paymentResult.payment);
+        } else {
+          console.error('Payment failed', paymentResult.error);
+        }
+      } catch (error) {
+        console.error('Error sending payment request', error);
+      }
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="stripe-form">
+      <div className="card-element-container">
+        <CardElement />
+      </div>
+      <button type="submit" disabled={!stripe}>Pagar con tarjeta</button>
+    </form>
+  );
+};
+
 const Checkout = () => {
-  const [user, setUser] = useLocalStorage('user');
+  const [user] = useLocalStorage('user');
   const [productos, setProductos] = useState([]);
   const [direccion, setDireccion] = useState(null);
   const location = useLocation();
   const [direccionSeleccionada, setDireccionSeleccionada] = useState(null);
-
   const [codigoDescuento, setCodigoDescuento] = useState('');
   const [descuentoAplicado, setDescuentoAplicado] = useState(false);
   const [mercadoPagoSelected, setMercadoPagoSelected] = useState(false);
   const [paypalSelected, setPaypalSelected] = useState(false);
-
+  const [stripeSelected, setStripeSelected] = useState(false);
   const { subtotal, total } = location.state;
 
   const handleCheckboxChange = (event) => {
     const direccionId = parseInt(event.target.value);
     setDireccionSeleccionada(direccionId);
   };
+
   const handleCardClick = (direccionId) => {
     setDireccionSeleccionada(direccionId);
   };
@@ -38,15 +95,13 @@ const Checkout = () => {
           const response = await fetch(`${baseURL}/carrito-compras/${user.ID_usuario}`);
           if (response.ok) {
             const data = await response.json();
-            setProductos(data);
+            setProductos(Array.isArray(data) ? data : []);
           } else {
             console.error("Error al cargar los productos del carrito");
           }
         } catch (error) {
           console.error("Error de red:", error);
         }
-      } else {
-
       }
     };
 
@@ -57,7 +112,6 @@ const Checkout = () => {
           const response = await fetch(`${baseURL}/direccion-envio-predeterminada-user/${user.ID_usuario}`);
           if (response.ok) {
             const data = await response.json();
-            // console.log(data)
             setDireccion(data);
           } else {
             console.error("Error al cargar las direcciones guardadas");
@@ -70,7 +124,7 @@ const Checkout = () => {
 
     fetchDirecciones();
     fetchProductosPedidos();
-  }, []);
+  }, [user.ID_usuario]);
 
   const handleInputChange = (event) => {
     setCodigoDescuento(event.target.value);
@@ -90,12 +144,28 @@ const Checkout = () => {
     if (paypalSelected) {
       setPaypalSelected(false);
     }
+    if (stripeSelected) {
+      setStripeSelected(false);
+    }
   };
 
   const handlePaypalChange = () => {
     setPaypalSelected(!paypalSelected);
     if (mercadoPagoSelected) {
       setMercadoPagoSelected(false);
+    }
+    if (stripeSelected) {
+      setStripeSelected(false);
+    }
+  };
+
+  const handleStripeChange = () => {
+    setStripeSelected(!stripeSelected);
+    if (mercadoPagoSelected) {
+      setMercadoPagoSelected(false);
+    }
+    if (paypalSelected) {
+      setPaypalSelected(false);
     }
   };
 
@@ -110,47 +180,40 @@ const Checkout = () => {
       return;
     }
 
-    if (!mercadoPagoSelected && !paypalSelected) {
+    if (!mercadoPagoSelected && !paypalSelected && !stripeSelected) {
       alert('Debe seleccionar un método de pago');
       return;
     }
 
-    const currentURL = new URL(window.location.href);
-    const host = "http://localhost:3000";
-    // const host = currentURL.protocol + '//' + currentURL.hostname;
-    // console.log(host); 
-    const id = user.ID_usuario;
+    if (paypalSelected) {
+      const createOrderResponse = await fetch(`${baseURL}/paypal/create-order`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ID_usuario: user.ID_usuario,
+          total,
+          currentURL: window.location.origin,
+          ID_direccion: direccionSeleccionada,
+        }),
+      });
 
-    const createOrderResponse = await fetch(`${baseURL}/paypal/create-order`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        ID_usuario: id,
-        total,
-        currentURL: host,
-        ID_direccion: direccionSeleccionada,
-      }),
-    });
-
-    if (createOrderResponse.ok) {
-      const data = await createOrderResponse.json();
-      // console.log(data);
-
-      if (data.links && Array.isArray(data.links) && data.links.length >= 2) {
-        const redirectUrl = data.links[1].href;
-
-        if (esURLSegura(redirectUrl)) {
-          window.location.href = redirectUrl;
+      if (createOrderResponse.ok) {
+        const data = await createOrderResponse.json();
+        if (data.links && Array.isArray(data.links) && data.links.length >= 2) {
+          const redirectUrl = data.links[1].href;
+          if (esURLSegura(redirectUrl)) {
+            window.location.href = redirectUrl;
+          } else {
+            console.error("La URL de redirección no es segura.");
+          }
         } else {
-          console.error("La URL de redirección no es segura.");
+          console.error("No se encontraron suficientes enlaces válidos en los datos proporcionados.");
         }
       } else {
-        console.error("No se encontraron suficientes enlaces válidos en los datos proporcionados.");
+        alert(`Hubo un error con la petición: ${createOrderResponse.status} ${createOrderResponse.statusText}`);
       }
-    } else {
-      alert(`Hubo un error con la petición: ${createOrderResponse.status} ${createOrderResponse.statusText}`);
     }
   };
 
@@ -170,7 +233,7 @@ const Checkout = () => {
                       {direccion ? (
                         <>
                           <div key={direccion.ID_direccion} onClick={() => handleCardClick(direccion.ID_direccion)}>
-                            <Card className="my-2 hover-card" >
+                            <Card className="my-2 hover-card">
                               <Card.Body className="d-flex">
                                 <Form.Check
                                   type="radio"
@@ -189,12 +252,14 @@ const Checkout = () => {
                               </Card.Body>
                               <Card.Footer className="text-muted" style={{ backgroundColor: 'transparent' }}>
                                 <Link
-                                  to={`/seleccionar-direccion-envio`}
-                                  state={{
-                                    subtotal: subtotal,
-                                    descuentoAplicado: descuentoAplicado,
-                                    total: total,
-                                    ID_usuario: user.ID_usuario
+                                  to={{
+                                    pathname: '/seleccionar-direccion-envio',
+                                    state: {
+                                      subtotal,
+                                      descuentoAplicado,
+                                      total,
+                                      ID_usuario: user.ID_usuario
+                                    }
                                   }}
                                   className="edit-link"
                                 >
@@ -206,7 +271,7 @@ const Checkout = () => {
                         </>
                       ) : (
                         <ul>
-                          <li> No existe ninguna dirección, agregue una
+                          <li>No existe ninguna dirección, agregue una
                             <Link to={"/agregar-direccion-envio"}> aquí</Link>
                           </li>
                         </ul>
@@ -230,34 +295,41 @@ const Checkout = () => {
               <div className="col-lg-4 col-md-6">
                 <div className="checkout__order">
                   <h4>Su pedido</h4>
-                  <div className="checkout__order__products">Productos <span>Total</span></div>
+                  <div className="checkout_order_products">Productos <span>Total</span></div>
                   <ul>
-                    {productos.map(producto => (
-                      <li key={producto.ID_producto}> {producto.nombre.slice(0, 15)}...(x{producto.cantidad}) <span>${(producto.precioFinal * producto.cantidad).toFixed(2)}</span></li>
+                    {Array.isArray(productos) && productos.map(producto => (
+                      <li key={producto.ID_producto}>{producto.nombre.slice(0, 15)}...(x{producto.cantidad}) <span>${(producto.precioFinal * producto.cantidad).toFixed(2)}</span></li>
                     ))}
                   </ul>
-                  <div className="checkout__order__subtotal">Subtotal <span>${subtotal.toFixed(2)}</span></div>
-                  {descuentoAplicado && <div className="checkout__order__total">Descuento aplicado (SPORT100): <span>-$100.00</span></div>}
-                  <div className="checkout__order__total">Total <span>${total.toFixed(2)}</span></div>
-                  <div className="checkout__input__checkbox">
+                  <div className="checkout_order_subtotal">Subtotal <span>${subtotal.toFixed(2)}</span></div>
+                  {descuentoAplicado && <div className="checkout_order_total">Descuento aplicado (SPORT100): <span>-$100.00</span></div>}
+                  <div className="checkout_order_total">Total <span>${total.toFixed(2)}</span></div>
+                  <div className="checkout_input_checkbox">
                     <label htmlFor="mercadopago">
-                      Mercado pago
+                      Mercado Pago
                       <input type="checkbox" id="mercadopago" checked={mercadoPagoSelected} onChange={handleMercadoPagoChange} />
                       <span className="checkmark"></span>
                     </label>
                   </div>
-                  <div className="checkout__input__checkbox">
+                  <div className="checkout_input_checkbox">
                     <label htmlFor="paypal">
-                      Paypal
+                      PayPal
                       <input type="checkbox" id="paypal" checked={paypalSelected} onChange={handlePaypalChange} />
                       <span className="checkmark"></span>
                     </label>
+                  </div>
+                  <div className="checkout_input_checkbox">
+                    <label htmlFor="stripe">
+                      Stripe
+                      <input type="checkbox" id="stripe" checked={stripeSelected} onChange={handleStripeChange} />
+                      <span className="checkmark"></span>
+                    </label>
+                    {stripeSelected && <StripeForm total={total} onPaymentSuccess={handleRealizarPedido} />}
                   </div>
                   <button type="button" className="site-btn" onClick={handleRealizarPedido}>REALIZAR PEDIDO</button>
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </section>

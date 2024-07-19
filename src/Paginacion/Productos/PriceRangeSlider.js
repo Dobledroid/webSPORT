@@ -3,7 +3,7 @@ import $ from 'jquery';
 import 'jquery-ui/ui/widgets/slider';
 import 'jquery-ui/themes/base/slider.css'; // Importa los estilos del slider de jQuery UI
 
-function PriceRangeSlider({ minPrice, maxPrice }) {
+function PriceRangeSlider({ minPrice, maxPrice, priceRange, setPriceRange, onPriceChange }) {
   const rangeSliderRef = useRef(null);
   const minAmountRef = useRef(null);
   const maxAmountRef = useRef(null);
@@ -17,10 +17,13 @@ function PriceRangeSlider({ minPrice, maxPrice }) {
       range: true,
       min: minPrice,
       max: maxPrice,
-      values: [minPrice, maxPrice],
+      values: priceRange,
       slide: function (event, ui) {
         minamount.val('$' + ui.values[0]);
         maxamount.val('$' + ui.values[1]);
+        
+        setPriceRange([ui.values[0], ui.values[1]]);
+        onPriceChange([ui.values[0], ui.values[1]]);
         
         // Resalta el rango seleccionado
         $('.ui-slider-range').css('background-color', '');
@@ -31,13 +34,13 @@ function PriceRangeSlider({ minPrice, maxPrice }) {
       }
     });
 
-    minamount.val('$' + minPrice);
-    maxamount.val('$' + maxPrice);
+    minamount.val('$' + priceRange[0]);
+    maxamount.val('$' + priceRange[1]);
 
     return () => {
       rangeSlider.slider('destroy');
     };
-  }, [minPrice, maxPrice]);
+  }, [minPrice, maxPrice, priceRange, setPriceRange, onPriceChange]);
 
   return (
     <div className="sidebar__item">
